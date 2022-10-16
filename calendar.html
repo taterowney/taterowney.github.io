@@ -150,7 +150,7 @@
 			});
 		};
 
-    async function upload_to_github(content, filename) {
+    async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
 //      (await pfs.rename(dir, "/old")).catch((e) => {console.log("pls don't refresh the page before the program is terminated!")})
       try {
         await pfs.rename(dir, "/old")
@@ -176,10 +176,16 @@
       // Now it should not be empty...
       console.log(await pfs.readdir(dir));
 
-      await pfs.writeFile(dir+'/'+filename, content, 'utf8')
-      console.log(await pfs.readFile(dir+'/'+filename, { encoding: 'utf8' }))
+      await pfs.writeFile(dir+'/schedule.json', schedule_content, 'utf8')
+      await pfs.writeFile(dir+'/special_schedule.json', special_schedule_content, 'utf8')
+      await pfs.writeFile(dir+'/immersives.json', immersives_content, 'utf8')
+      await pfs.writeFile(dir+'/breaks.json', breaks_content, 'utf8')
+//      console.log(await pfs.readFile(dir+'/'+filename, { encoding: 'utf8' }))
 
-      await git.add({fs, dir, filepath: filename})
+      await git.add({fs, dir, filepath: 'schedule.json'})
+      await git.add({fs, dir, filepath: 'special_schedule.json'})
+      await git.add({fs, dir, filepath: 'immersives.json'})
+      await git.add({fs, dir, filepath: 'breaks.json'})
 
       let sha = await git.commit({
         fs,
@@ -210,7 +216,9 @@
     }
 
 		// Loads the JavaScript client library and invokes `start` afterwards.
-		window.onload = function() {gapi.load('client', printCalendar); upload_to_github("helloooooooo!!", "test.md");}
+		window.onload = function() {gapi.load('client', printCalendar);
+      upload_to_github(schedule, special_schedule, immersives, breaks);
+    }
 	</script>
 </head>
 <body>
