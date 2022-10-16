@@ -185,10 +185,10 @@
       await pfs.writeFile(dir+'/breaks.json', breaks_content, 'utf8')
 //      console.log(await pfs.readFile(dir+'/'+filename, { encoding: 'utf8' }))
 
-      await git.add({fs, dir, filepath: 'schedule.json'})
-      await git.add({fs, dir, filepath: 'special_schedule.json'})
-      await git.add({fs, dir, filepath: 'immersives.json'})
-      await git.add({fs, dir, filepath: 'breaks.json'})
+      await git.add({fs, dir, filepath: dir+'/schedule.json'})
+      await git.add({fs, dir, filepath: dir+'/special_schedule.json'})
+      await git.add({fs, dir, filepath: dir+'/immersives.json'})
+      await git.add({fs, dir, filepath: dir+'/breaks.json'})
 
       let sha = await git.commit({
         fs,
