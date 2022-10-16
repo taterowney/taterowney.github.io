@@ -179,10 +179,10 @@
       // Now it should not be empty...
       console.log(await pfs.readdir(dir));
 
-      await pfs.writeFile(dir+'/schedule.json', schedule_content, 'utf8')
-      await pfs.writeFile(dir+'/special_schedule.json', special_schedule_content, 'utf8')
-      await pfs.writeFile(dir+'/immersives.json', immersives_content, 'utf8')
-      await pfs.writeFile(dir+'/breaks.json', breaks_content, 'utf8')
+      await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content), 'utf8')
+      await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
+      await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
+      await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
       console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
       await git.add({fs, dir, filepath: 'schedule.json'})
       await git.add({fs, dir, filepath: 'special_schedule.json'})
