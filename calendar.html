@@ -152,6 +152,9 @@
 
     async function upload_to_github(content, filename) {
 //      (await pfs.rename(dir, "/old")).catch((e) => {console.log("pls don't refresh the page before the program is terminated!")})
+      try {
+        await pfs.rename(dir, "/old")
+      }
       await pfs.mkdir(dir);
     //  await git.init({ fs, dir })
       // Behold - it is empty!
