@@ -155,6 +155,9 @@
       try {
         await pfs.rename(dir, "/old")
       }
+      catch {
+        console.log("please don't refresh the page before the process has finished!")
+      }
       await pfs.mkdir(dir);
     //  await git.init({ fs, dir })
       // Behold - it is empty!
