@@ -13,6 +13,12 @@
     window.pfs = window.fs.promises
     window.dir = '/test'
     const dir = '/test'
+
+    var schedule = {}
+    var special_schedule = {}
+    var immersives = {}
+    var breaks = {}
+
     function isAllDay(entry) {
       if (!entry.start.dateTime){
         return true
@@ -43,10 +49,7 @@
 			// You can get a list of time zones from here: http://www.timezoneconverter.com/cgi-bin/zonehelp
 			var userTimeZone = "America/Los_Angeles";
 
-      var schedule = {}
-      var special_schedule = {}
-      var immersives = {}
-      var breaks = {}
+
       var all_events = {}
 
 			// Initializes the client with the API key and the Translate API.
@@ -222,5 +225,4 @@
 	</script>
 </head>
 <body>
-  <div id="calendar"></div>
 </body>
