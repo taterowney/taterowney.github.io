@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<head>
+  <!-- For google calendar integration -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment@2/moment.min.js"></script>
+  <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+  <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
+  <script src="https://unpkg.com/isomorphic-git"></script>
+  <script type="module">
+    import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
+    // Initialize isomorphic-git with a file system
+    window.fs = new LightningFS('fs')
+    // I prefer using the Promisified version honestly
+    window.pfs = window.fs.promises
+    window.dir = '/test'
+    const dir = '/test'
+    function isAllDay(entry) {
+      if (!entry.start.dateTime){
+        return true
+      }
+      return false
+    }
+		/* This solution makes use of "simple access" to google, providing only an API Key.
+		* This way we can only get access to public calendars. To access a private calendar,
+		* we would need to use OAuth 2.0 access.
+		*
+		* "Simple" vs. "Authorized" access: https://developers.google.com/api-client-library/javascript/features/authentication
+		* Examples of "simple" vs OAuth 2.0 access: https://developers.google.com/api-client-library/javascript/samples/samples#authorizing-and-making-authorized-requests
+		*
+		* We will make use of "Option 1: Load the API discovery document, then assemble the request."
+		* as described in https://developers.google.com/api-client-library/javascript/start/start-js
+		*/
+		function printCalendar() {
+			// The "Calendar ID" from your calendar settings page, "Calendar Integration" secion:
+			var calendarId = '5a732f9566fc26bb400381b45805a2eb82b782ffd29dc96ec0e935bf1b14bedf@group.calendar.google.com';
+
+			// 1. Create a project using google's wizard: https://console.developers.google.com/start/api?id=calendar
+			// 2. Create credentials:
+			//    a) Go to https://console.cloud.google.com/apis/credentials
+			//    b) Create Credentials / API key
+			//    c) Since your key will be called from any of your users' browsers, set "Application restrictions" to "None",
+			//       leave "Website restrictions" blank; you may optionally set "API restrictions" to "Google Calendar API"
+			var apiKey = 'AIzaSyDvhWlAAxXDqWW4rdPM9lBTBQ4G0lCNk1s';
+			// You can get a list of time zones from here: http://www.timezoneconverter.com/cgi-bin/zonehelp
+			var userTimeZone = "America/Los_Angeles";
+
+      var schedule = {}
+      var special_schedule = {}
+      var immersives = {}
+      var breaks = {}
+      var all_events = {}
+
+			// Initializes the client with the API key and the Translate API.
+      gapi.client.init({
+				'apiKey': apiKey,
+				// Discovery docs docs: https://developers.google.com/api-client-library/javascript/features/discovery
+				'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+			}).then(function () {
+				// Use Google's "apis-explorer" for research: https://developers.google.com/apis-explorer/#s/calendar/v3/
+				// Events: list API docs: https://developers.google.com/calendar/v3/reference/events/list
+        return gapi.client.calendar.events.list({
+					'calendarId': calendarId,
+					'timeZone': userTimeZone,
+					'singleEvents': true,
+					'timeMin': (new Date()).toISOString(), //gathers only events not happened yet
+					'maxResults': 20,
+					'orderBy': 'startTime'
+				});
+			}).then(function (response) {
+				if (response.result.items) {
+					// var calendarRows = ['<table class="calendar"><tbody>'];
+					// response.result.items.forEach(function(entry) {
+					// 	var startsAt = moment(entry.start.dateTime).format("L") + ' ' + moment(entry.start.dateTime).format("LT");
+					// 	var endsAt = moment(entry.end.dateTime).format("LT");
+					// 	calendarRows.push(`<tr><td>${startsAt} - ${endsAt}</td><td>${entry.summary}</td></tr>`);
+					// });
+					// calendarRows.push('</tbody></table>');
+					// document.getElementById('calendar').innerHTML = calendarRows.join("");
+          // console.log(calendarRows.join(""));
+          response.result.items.forEach(function(entry) {
+            //classify events by date
+//            console.log(moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD"))
+            if (!all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")]) {
+              all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")] = new Array()
+            }
+            all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")].push(entry)
+          })
+          //loop through events by date
+//          console.log(all_events)
+          for (const [date, events] of Object.entries(all_events)) {
+            let day_type = "normal"
+            for (let i=0; i<events.length; ++i) {
+              let e = events[i]
+              if (isAllDay(e)) {
+                if (e.summary.toLowerCase().includes("special schedule")){
+                  day_type="special schedule"
+                }
+                else if (e.summary.toLowerCase().includes("immersive")){
+                  day_type="immersive"
+                  if (!immersives[e.summary.replace(/ /g, '')]){
+                    immersives[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
+                  }
+                  else {
+                    immersives[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
+                  }
+                  var immersive_name = e.summary.replace(/ /g, '')
+                }
+                else if (e.summary.toLowerCase().includes("break")){
+                  day_type="break"
+                  if (!breaks[e.summary.replace(/ /g, '')]){
+                    breaks[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
+                  }
+                  else {
+                    breaks[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
+                  }
+                }
+//                console.log(day_type)
+              }
+            }
+            for (let i=0; i<events.length; ++i) {
+              let e = events[i]
+              if (!isAllDay(e)) {
+                if (day_type == "normal") {
+                  if (!schedule[moment(e.start.dateTime).format('dddd')]) {
+                    schedule[moment(e.start.dateTime).format('dddd')] = {}
+                  }
+                  schedule[moment(e.start.dateTime).format('dddd')][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                }
+                else if (day_type == "special schedule") {
+                  if (!special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")]) {
+                    special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")] = {}
+                  }
+                  special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                }
+                else if (day_type == "immersive") {
+                  if (!immersives[immersive_name + ' Schedule']) {
+                    immersives[immersive_name + ' Schedule'] = {}
+                  }
+                  immersives[immersive_name + ' Schedule'][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                }
+              }
+            }
+          }
+          console.log(schedule)
+          console.log(special_schedule)
+          console.log(immersives)
+          console.log(breaks)
+				}
+			}, function (reason) {
+				console.log('Error: ' + reason.result.error.message);
+			});
+		};
+
+    async function upload_to_github(content, filename) {
+//      (await pfs.rename(dir, "/old")).catch((e) => {console.log("pls don't refresh the page before the program is terminated!")})
+      await pfs.mkdir(dir);
+    //  await git.init({ fs, dir })
+      // Behold - it is empty!
+      console.log(await pfs.readdir(dir));
+      console.log("waiting for commit request to go through...")
+      console.log(await git.clone({
+      fs,
+      http,
+      dir,
+      corsProxy: 'https://cors.isomorphic-git.org',
+      url: 'https://github.com/tate-r/tate-r.github.io.git',
+      ref: 'master',
+      singleBranch: true,
+      depth: 10
+    }));
+      // Now it should not be empty...
+      console.log(await pfs.readdir(dir));
+
+      await pfs.writeFile(dir+'/'+filename, content, 'utf8')
+      console.log(await pfs.readFile(dir+'/'+filename, { encoding: 'utf8' }))
+
+      await git.add({fs, dir, filepath: filename})
+
+      let sha = await git.commit({
+        fs,
+        dir,
+        message: 'This is a test!',
+        author: {
+          name: 'Test',
+          email: 'taterowney@gmail.com'
+        }
+      })
+      console.log(sha)
+
+      const onAuth = () => ({
+        username: 'tate-r',
+        password: prompt("insert password:"),
+      })
+
+      let pushResult = await git.push({
+        fs,
+        http,
+        dir,
+        remote: 'origin',
+        ref: 'master',
+        onAuth,
+      })
+      console.log(pushResult)
+      await pfs.rename(dir, "/old");
+    }
+
+		// Loads the JavaScript client library and invokes `start` afterwards.
+		window.onload = function() {gapi.load('client', printCalendar); upload_to_github("helloooooooo!!", "test.md");}
+	</script>
+</head>
+<body>
+  <div id="calendar"></div>
+</body>
