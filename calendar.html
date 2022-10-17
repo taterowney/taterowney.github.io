@@ -6,11 +6,13 @@
   <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
   <script src="https://unpkg.com/isomorphic-git"></script>
   <script type="module">
+    //isomorphic-git stuff
     import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
     // Initialize isomorphic-git with a file system
     window.fs = new LightningFS('fs')
-    // I prefer using the Promisified version honestly
+    // they want us to use their own file editor;
     window.pfs = window.fs.promises
+    //directory to which were cloning
     window.dir = '/test'
     const dir = '/test'
 
