@@ -10,17 +10,19 @@
     import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
     // Initialize isomorphic-git with a file system
     window.fs = new LightningFS('fs')
-    // they want us to use their own file editor;
+    // they want us to use their own file editor, called LightningFS
     window.pfs = window.fs.promises
-    //directory to which were cloning
+    //the directory to which we're cloning
     window.dir = '/test'
     const dir = '/test'
 
+    //stuff which we're going to write to the JSON files (named according to which file they will write to)
     var schedule = {}
     var special_schedule = {}
     var immersives = {}
     var breaks = {}
 
+    //find if a calendar event is all-day
     function isAllDay(entry) {
       if (!entry.start.dateTime){
         return true
@@ -72,17 +74,8 @@
 				});
 			}).then(function (response) {
 				if (response.result.items) {
-					// var calendarRows = ['<table class="calendar"><tbody>'];
-					// response.result.items.forEach(function(entry) {
-					// 	var startsAt = moment(entry.start.dateTime).format("L") + ' ' + moment(entry.start.dateTime).format("LT");
-					// 	var endsAt = moment(entry.end.dateTime).format("LT");
-					// 	calendarRows.push(`<tr><td>${startsAt} - ${endsAt}</td><td>${entry.summary}</td></tr>`);
-					// });
-					// calendarRows.push('</tbody></table>');
-					// document.getElementById('calendar').innerHTML = calendarRows.join("");
-          // console.log(calendarRows.join(""));
           response.result.items.forEach(function(entry) {
-            //classify events by date
+            //classify events by date; each element in the dictionary is one calendar day w/ an array of events on that day
 //            console.log(moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD"))
             if (!all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")]) {
               all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")] = new Array()
@@ -90,10 +83,10 @@
             all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")].push(entry)
           })
           //loop through events by date
-//          console.log(all_events)
           for (const [date, events] of Object.entries(all_events)) {
             let day_type = "normal"
             for (let i=0; i<events.length; ++i) {
+              //check all of the all-day events to figure out if there's any designators telling us that today is special
               let e = events[i]
               if (isAllDay(e)) {
                 if (e.summary.toLowerCase().includes("special schedule")){
@@ -101,16 +94,19 @@
                 }
                 else if (e.summary.toLowerCase().includes("immersive")){
                   day_type="immersive"
+                  //if its an immersive, and the immersive has just started, then add a new entry in the immersives date ranges
                   if (!immersives[e.summary.replace(/ /g, '')]){
                     immersives[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
                   }
                   else {
                     immersives[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
                   }
+                  //this is used later to make sure we name the immersive schedule correctly
                   var immersive_name = e.summary.replace(/ /g, '')
                 }
                 else if (e.summary.toLowerCase().includes("break")){
                   day_type="break"
+                  //if its a break, and the break has just started, then add a new entry in the breaks date ranges
                   if (!breaks[e.summary.replace(/ /g, '')]){
                     breaks[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
                   }
@@ -124,6 +120,7 @@
             for (let i=0; i<events.length; ++i) {
               let e = events[i]
               if (!isAllDay(e)) {
+                //check all of the not all-day events to put together today's schedule
                 if (day_type == "normal") {
                   if (!schedule[moment(e.start.dateTime).format('dddd')]) {
                     schedule[moment(e.start.dateTime).format('dddd')] = {}
@@ -156,41 +153,48 @@
 		};
 
     async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
-//      (await pfs.rename(dir, "/old")).catch((e) => {console.log("pls don't refresh the page before the program is terminated!")})
+      //if the page is closed before this function completes, there is still some junk lying around in the folder we are using
+      //this tries to clean it up
       try {
         await pfs.rename(dir, "/old")
       }
       catch {
-        console.log("please don't refresh the page before the process has finished!")
+        console.log("directory cleaned up!")
       }
+
+      //make a new directory
       await pfs.mkdir(dir);
     //  await git.init({ fs, dir })
-      // Behold - it is empty!
       console.log(await pfs.readdir(dir));
       console.log("waiting for commit request to go through...")
+      //clone the info from the github repo
       console.log(await git.clone({
-      fs,
-      http,
-      dir,
-      corsProxy: 'https://cors.isomorphic-git.org',
-      url: 'https://github.com/taterowney/taterowney.github.io.git',
-      ref: 'main',
-      singleBranch: true,
-      depth: 10
-    }));
-      // Now it should not be empty...
+        fs,
+        http,
+        dir,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        url: 'https://github.com/taterowney/taterowney.github.io.git',
+        ref: 'main',
+        singleBranch: true,
+        depth: 10
+      }));
+      //log all of the stuff which has been cloned
       console.log(await pfs.readdir(dir));
 
+      //write all the data we've gathered from gcal to their respective files
       await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content), 'utf8')
       await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
       await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
       await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
       console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
+
+      //flag the files we modified to get ready to commit
       await git.add({fs, dir, filepath: 'schedule.json'})
       await git.add({fs, dir, filepath: 'special_schedule.json'})
       await git.add({fs, dir, filepath: 'immersives.json'})
       await git.add({fs, dir, filepath: 'breaks.json'})
 
+      //commit (don't worry about the shasum, it doesn't really matter)
       let sha = await git.commit({
         fs,
         dir,
@@ -200,13 +204,13 @@
           email: 'taterowney@gmail.com'
         }
       })
-      console.log(sha)
 
       const onAuth = () => ({
         username: 'tate-r',
         password: prompt("insert password:"),
       })
 
+      //push the code to the repo
       let pushResult = await git.push({
         fs,
         http,
@@ -219,7 +223,7 @@
       await pfs.rename(dir, "/old");
     }
 
-		// Loads the JavaScript client library and invokes `start` afterwards.
+		// Loads the JavaScript client library and invokes `start` afterwards; then pushes the obtained info to Github
 		window.onload = function() {gapi.load('client', printCalendar);
       upload_to_github(schedule, special_schedule, immersives, breaks);
     }
