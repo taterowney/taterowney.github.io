@@ -14,9 +14,9 @@
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
 
-    <script async src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
-    <script async src="https://unpkg.com/isomorphic-git"></script>
-    <script async type="module">
+    <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
+    <script src="https://unpkg.com/isomorphic-git"></script>
+    <script type="module">
       import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
     </script>
     <script type="text/javascript">
@@ -316,9 +316,15 @@
           console.log(pushResult)
           await pfs.rename(dir, "/old");
         }
+        window.onload = function () {
+          gapiLoaded()
+          gisLoaded()
+        }
     </script>
 <!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+<!--     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script> -->
+<!--     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script> -->
+    <script async defer src="https://apis.google.com/js/api.js"></script>
+    <script async defer src="https://accounts.google.com/gsi/client"></script>
   </body>
 </html>
