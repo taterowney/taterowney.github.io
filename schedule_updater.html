@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bayclock Schedule Updater Wizard</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <p>People API Quickstart</p>
+
+    <!--Add buttons to initiate auth sequence and sign out-->
+    <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
+    <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
+
+    <pre id="content" style="white-space: pre-wrap;"></pre>
+
+
+    <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
+    <script src="https://unpkg.com/isomorphic-git"></script>
+    <script type="text/javascript">
+      //isomorphic-git stuff
+      import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
+      // Initialize isomorphic-git with a file system
+      window.fs = new LightningFS('fs')
+      // they want us to use their own file editor, called LightningFS
+      window.pfs = window.fs.promises
+      //the directory to which we're cloning
+      window.dir = '/test'
+      const dir = '/test'
+
+      //stuff which we're going to write to the JSON files (named according to which file they will write to)
+      var schedule = {}
+      var special_schedule = {}
+      var immersives = {}
+      var breaks = {}
+      var all_events = {}
+
+      //find if a calendar event is all-day
+      function isAllDay(entry) {
+        if (!entry.start.dateTime){
+          return true
+        }
+        return false
+
+      // TODO(developer): Set to client ID and API key from the Developer Console
+      const CLIENT_ID = '123769375139-u7hb25ugflb0b8a22jrkhk5eeaoood9u.apps.googleusercontent.com';
+      const API_KEY = 'AIzaSyDvhWlAAxXDqWW4rdPM9lBTBQ4G0lCNk1s';
+
+      const userTimeZone = "America/Los_Angeles"
+
+      const calendarId = 'ftksveaat9n9bccofnidta4rb79oprsh@import.calendar.google.com'
+
+
+      // Discovery doc URL for APIs used by the quickstart
+//      const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/people/v1/rest';
+      const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+      const SCOPES = 'https://www.googleapis.com/auth/calendar.events.readonly';
+
+      let tokenClient;
+      let gapiInited = false;
+      let gisInited = false;
+
+      document.getElementById('authorize_button').style.visibility = 'hidden';
+      document.getElementById('signout_button').style.visibility = 'hidden';
+
+      /**
+       * Callback after api.js is loaded.
+       */
+      function gapiLoaded() {
+        gapi.load('client', initializeGapiClient);
+        console.log(gapi)
+      }
+
+      /**
+       * Callback after the API client is loaded. Loads the
+       * discovery doc to initialize the API.
+       */
+      async function initializeGapiClient() {
+        await gapi.client.init({
+          apiKey: API_KEY,
+          discoveryDocs: [DISCOVERY_DOC],
+        });
+        console.log("inited")
+        gapiInited = true;
+        maybeEnableButtons();
+      }
+
+      /**
+       * Callback after Google Identity Services are loaded.
+       */
+      function gisLoaded() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: SCOPES,
+          callback: '', // defined later
+        });
+        gisInited = true;
+        console.log(tokenClient)
+        maybeEnableButtons();
+      }
+
+      /**
+       * Enables user interaction after all libraries are loaded.
+       */
+      function maybeEnableButtons() {
+        if (gapiInited && gisInited) {
+          document.getElementById('authorize_button').style.visibility = 'visible';
+        }
+      }
+
+      /**
+       *  Sign in the user upon button click.
+       */
+      function handleAuthClick() {
+        tokenClient.callback = async (resp) => {
+          if (resp.error !== undefined) {
+            throw (resp);
+          }
+          document.getElementById('signout_button').style.visibility = 'visible';
+          document.getElementById('authorize_button').innerText = 'Refresh';
+          await listConnectionNames();
+        };
+
+        if (gapi.client.getToken() === null) {
+          // Prompt the user to select a Google Account and ask for consent to share their data
+          // when establishing a new session.
+          tokenClient.requestAccessToken({prompt: 'consent'});
+        } else {
+          // Skip display of account chooser and consent dialog for an existing session.
+          tokenClient.requestAccessToken({prompt: ''});
+        }
+      }
+
+      /**
+       *  Sign out the user upon button click.
+       */
+      function handleSignoutClick() {
+        const token = gapi.client.getToken();
+        if (token !== null) {
+          google.accounts.oauth2.revoke(token.access_token);
+          gapi.client.setToken('');
+          document.getElementById('content').innerText = '';
+          document.getElementById('authorize_button').innerText = 'Authorize';
+          document.getElementById('signout_button').style.visibility = 'hidden';
+        }
+      }
+
+      /**
+       * Print the display name if available for 10 connections.
+       */
+      async function listConnectionNames() {
+        let response;
+//        try {
+          // Fetch first 10 files
+          console.log(await gapi.client.calendar)
+          response = await gapi.client.calendar.events.list({
+  					'calendarId': calendarId,
+  					'timeZone': userTimeZone,
+  					'singleEvents': true,
+  					'timeMin': (new Date()).toISOString(), //gathers only events not happened yet
+  					'maxResults': 20,
+  					'orderBy': 'startTime'
+  				})
+          console.log(response)
+
+
+          if (response.result.items) {
+            response.result.items.forEach(function(entry) {
+              //classify events by date; each element in the dictionary is one calendar day w/ an array of events on that day
+          //            console.log(moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD"))
+              if (!all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")]) {
+                all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")] = new Array()
+              }
+              all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")].push(entry)
+            })
+            //loop through events by date
+            for (const [date, events] of Object.entries(all_events)) {
+              let day_type = "normal"
+              for (let i=0; i<events.length; ++i) {
+                //check all of the all-day events to figure out if there's any designators telling us that today is special
+                let e = events[i]
+                if (isAllDay(e)) {
+                  if (e.summary.toLowerCase().includes("special schedule")){
+                    day_type="special schedule"
+                  }
+                  else if (e.summary.toLowerCase().includes("immersive")){
+                    day_type="immersive"
+                    //if its an immersive, and the immersive has just started, then add a new entry in the immersives date ranges
+                    if (!immersives[e.summary.replace(/ /g, '')]){
+                      immersives[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
+                    }
+                    else {
+                      immersives[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
+                    }
+                    //this is used later to make sure we name the immersive schedule correctly
+                    var immersive_name = e.summary.replace(/ /g, '')
+                  }
+                  else if (e.summary.toLowerCase().includes("break")){
+                    day_type="break"
+                    //if its a break, and the break has just started, then add a new entry in the breaks date ranges
+                    if (!breaks[e.summary.replace(/ /g, '')]){
+                      breaks[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
+                    }
+                    else {
+                      breaks[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
+                    }
+                  }
+          //                console.log(day_type)
+                }
+              }
+              for (let i=0; i<events.length; ++i) {
+                let e = events[i]
+                if (!isAllDay(e)) {
+                  //check all of the not all-day events to put together today's schedule
+                  if (day_type == "normal") {
+                    if (!schedule[moment(e.start.dateTime).format('dddd')]) {
+                      schedule[moment(e.start.dateTime).format('dddd')] = {}
+                    }
+                    schedule[moment(e.start.dateTime).format('dddd')][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                  }
+                  else if (day_type == "special schedule") {
+                    if (!special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")]) {
+                      special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")] = {}
+                    }
+                    special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                  }
+                  else if (day_type == "immersive") {
+                    if (!immersives[immersive_name + ' Schedule']) {
+                      immersives[immersive_name + ' Schedule'] = {}
+                    }
+                    immersives[immersive_name + ' Schedule'][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                  }
+                }
+              }
+            }
+            console.log(schedule)
+            console.log(special_schedule)
+            console.log(immersives)
+            console.log(breaks)
+          }
+
+
+
+        }
+        async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
+          //if the page is closed before this function completes, there is still some junk lying around in the folder we are using
+          //this tries to clean it up
+          try {
+            await pfs.rename(dir, "/old")
+          }
+          catch {
+            console.log("directory cleaned up!")
+          }
+
+          //make a new directory
+          await pfs.mkdir(dir);
+        //  await git.init({ fs, dir })
+          console.log(await pfs.readdir(dir));
+          console.log("waiting for commit request to go through...")
+          //clone the info from the github repo
+          console.log(await git.clone({
+            fs,
+            http,
+            dir,
+            corsProxy: 'https://cors.isomorphic-git.org',
+            url: 'https://github.com/taterowney/taterowney.github.io.git',
+            ref: 'main',
+            singleBranch: true,
+            depth: 10
+          }));
+          //log all of the stuff which has been cloned
+          console.log(await pfs.readdir(dir));
+
+          //write all the data we've gathered from gcal to their respective files
+          await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content), 'utf8')
+          await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
+          await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
+          await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
+          console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
+
+          //flag the files we modified to get ready to commit
+          await git.add({fs, dir, filepath: 'schedule.json'})
+          await git.add({fs, dir, filepath: 'special_schedule.json'})
+          await git.add({fs, dir, filepath: 'immersives.json'})
+          await git.add({fs, dir, filepath: 'breaks.json'})
+
+          //commit (don't worry about the shasum, it doesn't really matter)
+          let sha = await git.commit({
+            fs,
+            dir,
+            message: 'This is a test!',
+            author: {
+              name: 'Test',
+              email: 'taterowney@gmail.com'
+            }
+          })
+
+          const onAuth = () => ({
+            username: 'tate-r',
+            password: prompt("insert password:"),
+          })
+
+          //push the code to the repo
+          let pushResult = await git.push({
+            fs,
+            http,
+            dir,
+            remote: 'origin',
+            ref: 'main',
+            onAuth,
+          })
+          console.log(pushResult)
+          await pfs.rename(dir, "/old");
+        }
+
+    </script>
+<!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+  </body>
+</html>
