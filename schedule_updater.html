@@ -70,8 +70,8 @@
       /**
        * Callback after api.js is loaded.
        */
-      function gapiLoaded() {
-        gapi.load('client', initializeGapiClient);
+      async function gapiLoaded() {
+        await gapi.load('client', initializeGapiClient);
         console.log(gapi)
       }
 
@@ -317,8 +317,8 @@
           await pfs.rename(dir, "/old");
         }
         window.onload = function () {
-          gapiLoaded()
-          gisLoaded()
+          gapiLoaded();
+          gisLoaded();
         }
     </script>
 <!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
