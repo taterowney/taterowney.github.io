@@ -126,7 +126,7 @@
        */
       async function listConnectionNames() {
         let response;
-        try {
+//        try {
           // Fetch first 10 files
           response = gapi.client.calendar.events.list({
   					'calendarId': calendarId,
@@ -137,9 +137,10 @@
   					'orderBy': 'startTime'
   				})
           console.log(response)
-        } catch (err) {
-          document.getElementById('content').innerText = err.message;
-          return;
+//        }
+//        catch (err) {
+//          document.getElementById('content').innerText = err.message;
+//          return;
         }
       }
     </script>
