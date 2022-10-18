@@ -13,13 +13,84 @@
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
-
     <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
     <script src="https://unpkg.com/isomorphic-git"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment@2/moment.min.js"></script>
-    <script type="module">
-      //isomorphic-git stuff
+    <script>
       import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
+      async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
+        //if the page is closed before this function completes, there is still some junk lying around in the folder we are using
+        //this tries to clean it up
+        try {
+          await pfs.rename(dir, "/old")
+        }
+        catch {
+          console.log("directory cleaned up!")
+        }
+
+        //make a new directory
+        await pfs.mkdir(dir);
+      //  await git.init({ fs, dir })
+        console.log(await pfs.readdir(dir));
+        console.log("waiting for commit request to go through...")
+        //clone the info from the github repo
+        console.log(await git.clone({
+          fs,
+          http,
+          dir,
+          corsProxy: 'https://cors.isomorphic-git.org',
+          url: 'https://github.com/taterowney/taterowney.github.io.git',
+          ref: 'main',
+          singleBranch: true,
+          depth: 10
+        }));
+        //log all of the stuff which has been cloned
+        console.log(await pfs.readdir(dir));
+
+        //write all the data we've gathered from gcal to their respective files
+        await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content), 'utf8')
+        await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
+        await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
+        await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
+        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
+
+        //flag the files we modified to get ready to commit
+        await git.add({fs, dir, filepath: 'schedule.json'})
+        await git.add({fs, dir, filepath: 'special_schedule.json'})
+        await git.add({fs, dir, filepath: 'immersives.json'})
+        await git.add({fs, dir, filepath: 'breaks.json'})
+
+        //commit (don't worry about the shasum, it doesn't really matter)
+        let sha = await git.commit({
+          fs,
+          dir,
+          message: 'This is a test!',
+          author: {
+            name: 'Test',
+            email: 'taterowney@gmail.com'
+          }
+        })
+
+        const onAuth = () => ({
+          username: 'tate-r',
+          password: prompt("insert password:"),
+        })
+
+        //push the code to the repo
+        let pushResult = await git.push({
+          fs,
+          http,
+          dir,
+          remote: 'origin',
+          ref: 'main',
+          onAuth,
+        })
+        console.log(pushResult)
+        await pfs.rename(dir, "/old");
+      }
+    </script>
+    <script type="text/javascript">
+      //isomorphic-git stuff
       // Initialize isomorphic-git with a file system
       window.fs = new LightningFS('fs')
       // they want us to use their own file editor, called LightningFS
@@ -247,76 +318,7 @@
 
 
 
-        async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
-          //if the page is closed before this function completes, there is still some junk lying around in the folder we are using
-          //this tries to clean it up
-          try {
-            await pfs.rename(dir, "/old")
-          }
-          catch {
-            console.log("directory cleaned up!")
-          }
 
-          //make a new directory
-          await pfs.mkdir(dir);
-        //  await git.init({ fs, dir })
-          console.log(await pfs.readdir(dir));
-          console.log("waiting for commit request to go through...")
-          //clone the info from the github repo
-          console.log(await git.clone({
-            fs,
-            http,
-            dir,
-            corsProxy: 'https://cors.isomorphic-git.org',
-            url: 'https://github.com/taterowney/taterowney.github.io.git',
-            ref: 'main',
-            singleBranch: true,
-            depth: 10
-          }));
-          //log all of the stuff which has been cloned
-          console.log(await pfs.readdir(dir));
-
-          //write all the data we've gathered from gcal to their respective files
-          await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content), 'utf8')
-          await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
-          await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
-          await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
-          console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
-
-          //flag the files we modified to get ready to commit
-          await git.add({fs, dir, filepath: 'schedule.json'})
-          await git.add({fs, dir, filepath: 'special_schedule.json'})
-          await git.add({fs, dir, filepath: 'immersives.json'})
-          await git.add({fs, dir, filepath: 'breaks.json'})
-
-          //commit (don't worry about the shasum, it doesn't really matter)
-          let sha = await git.commit({
-            fs,
-            dir,
-            message: 'This is a test!',
-            author: {
-              name: 'Test',
-              email: 'taterowney@gmail.com'
-            }
-          })
-
-          const onAuth = () => ({
-            username: 'tate-r',
-            password: prompt("insert password:"),
-          })
-
-          //push the code to the repo
-          let pushResult = await git.push({
-            fs,
-            http,
-            dir,
-            remote: 'origin',
-            ref: 'main',
-            onAuth,
-          })
-          console.log(pushResult)
-          await pfs.rename(dir, "/old");
-        }
     </script>
 <!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
      <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
