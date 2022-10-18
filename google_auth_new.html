@@ -47,6 +47,7 @@
        */
       function gapiLoaded() {
         gapi.load('client', initializeGapiClient);
+        console.log(gapi)
       }
 
       /**
@@ -73,6 +74,8 @@
           callback: '', // defined later
         });
         gisInited = true;
+        console.log(tokenClient)
+        console.log(gapi)
         maybeEnableButtons();
       }
 
@@ -145,8 +148,8 @@
 //          return;
         }
     </script>
-    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script>
-<!--    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script> -->
+<!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
   </body>
 </html>
