@@ -70,8 +70,8 @@
       /**
        * Callback after api.js is loaded.
        */
-      async function gapiLoaded() {
-        await gapi.load('client', initializeGapiClient);
+      function gapiLoaded() {
+        gapi.load('client', initializeGapiClient);
         console.log(gapi)
       }
 
