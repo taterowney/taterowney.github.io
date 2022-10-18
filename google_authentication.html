@@ -106,8 +106,8 @@
 
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
-        console.log(gapi.client.calendar)
-        return gapi.client.calendar.events.list({
+        console.log(await gapi.client.calendar)
+        response = await gapi.client.calendar.events.list({
 					'calendarId': calendarId,
 					'timeZone': userTimeZone,
 					'singleEvents': true,
