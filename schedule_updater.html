@@ -13,12 +13,16 @@
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
+    <br>
+
+    <button id="push_to_github">Push Schedule to Github</button>
+
     <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
     <script src="https://unpkg.com/isomorphic-git"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment@2/moment.min.js"></script>
     <script type="module">
       import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
-      export async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
+      async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
         //if the page is closed before this function completes, there is still some junk lying around in the folder we are using
         //this tries to clean it up
         try {
@@ -88,8 +92,9 @@
         console.log(pushResult)
         await pfs.rename(dir, "/old");
       }
+      document.getElementById("push_to_github").onclick = upload_to_github(schedule, special_schedule, immersives, breaks)
     </script>
-    <script type="module">
+    <script type="text/javascript">
       //isomorphic-git stuff
       // Initialize isomorphic-git with a file system
       window.fs = new LightningFS('fs')
