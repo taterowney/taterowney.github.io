@@ -92,6 +92,7 @@
         console.log(pushResult)
         await pfs.rename(dir, "/old");
       }
+      window.upload = upload_to_github
 //      document.getElementById("push_to_github").onclick = "upload_to_github(schedule, special_schedule, immersives, breaks)"
 //      document.getElementById("push_to_github").style.display = "block"
 //      document.getElementById("push_to_github").addEventListener("click", upload_to_github(schedule, special_schedule, immersives, breaks))
@@ -319,7 +320,7 @@
             console.log(special_schedule)
             console.log(immersives)
             console.log(breaks)
-            upload_to_github(schedule, special_schedule, immersives, breaks)
+            window.upload(schedule, special_schedule, immersives, breaks)
           }
         }
 
