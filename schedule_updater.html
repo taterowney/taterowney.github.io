@@ -92,7 +92,7 @@
         console.log(pushResult)
         await pfs.rename(dir, "/old");
       }
-      document.getElementById("push_to_github").onclick = upload_to_github(schedule, special_schedule, immersives, breaks)
+      document.getElementById("push_to_github").onclick = "upload_to_github(schedule, special_schedule, immersives, breaks)"
       document.getElementById("push_to_github").style.display = "block"
     </script>
     <script type="text/javascript">
