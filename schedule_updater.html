@@ -15,7 +15,7 @@
 
     <br>
 
-    <button id="push_to_github" style="display:none;">Push Schedule to Github</button>
+    <button id="push_to_github" style="display:none;" onclick="upload_to_github(schedule, special_schedule, immersives, breaks)">Push Schedule to Github</button>
 
     <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
     <script src="https://unpkg.com/isomorphic-git"></script>
@@ -92,7 +92,7 @@
         console.log(pushResult)
         await pfs.rename(dir, "/old");
       }
-      document.getElementById("push_to_github").onclick = "upload_to_github(schedule, special_schedule, immersives, breaks)"
+//      document.getElementById("push_to_github").onclick = "upload_to_github(schedule, special_schedule, immersives, breaks)"
       document.getElementById("push_to_github").style.display = "block"
     </script>
     <script type="text/javascript">
