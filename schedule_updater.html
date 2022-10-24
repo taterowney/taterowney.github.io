@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Bayclock Schedule Updater Wizard</title>
+    <title>Bayclock Schedule Updater</title>
     <meta charset="utf-8" />
   </head>
   <body>
-    <p>People API Quickstart</p>
+    <p>Bayclock Schedule Updater</p>
 
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
@@ -14,8 +14,6 @@
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
     <br>
-
-    <button id="push_to_github" style="display:none;">Push Schedule to Github</button>
 
     <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
     <script src="https://unpkg.com/isomorphic-git"></script>
@@ -240,11 +238,11 @@
   					'calendarId': calendarId,
   					'timeZone': userTimeZone,
   					'singleEvents': true,
-  					'timeMin': (new Date()).toISOString(), //gathers only events not happened yet
-  					'maxResults': 20,
+  					'timeMin': (moment().add(-24, "hours")).toISOString(), //gathers events from 1 day ago forward
+  					'maxResults': 100,
   					'orderBy': 'startTime'
   				})
-          console.log(response)
+          console.log((moment().add(-24, "hours")).toISOString())
 
 
           if (response.result.items) {
