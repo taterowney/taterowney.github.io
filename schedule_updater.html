@@ -262,6 +262,16 @@
                   if (e.summary.toLowerCase().includes("special schedule")){
                     day_type="special schedule"
                   }
+                  else if (e.summary.toLowerCase().includes("no school")){
+                    day_type="break"
+                    //if its a break, and the break has just started, then add a new entry in the breaks date ranges
+                    if (!breaks[e.summary.replace(/ /g, '')]){
+                      breaks[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
+                    }
+                    else {
+                      breaks[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
+                    }
+                  }
                   else if (e.summary.toLowerCase().includes("immersive")){
                     day_type="immersive"
                     //if its an immersive, and the immersive has just started, then add a new entry in the immersives date ranges
@@ -274,24 +284,19 @@
                     //this is used later to make sure we name the immersive schedule correctly
                     var immersive_name = e.summary.replace(/ /g, '')
                   }
-                  else if (e.summary.toLowerCase().includes("no school")){
-                    day_type="break"
-                    //if its a break, and the break has just started, then add a new entry in the breaks date ranges
-                    if (!breaks[e.summary.replace(/ /g, '')]){
-                      breaks[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
-                    }
-                    else {
-                      breaks[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
-                    }
-                  }
-          //                console.log(day_type)
                 }
               }
               for (let i=0; i<events.length; ++i) {
                 let e = events[i]
                 if (!isAllDay(e)) {
+//they don't do headers for immersives for some reason, so the events are checked to see if they are immersives
+                  if (e.summary.toLowerCase().includes("(imm)") || e.summary.toLowerCase().includes("immersive")) {
+                    day_type="immersive"
+                    var immersive_name = e.summary.replace(/ /g, '')
+                  }
                   //check all of the not all-day events to put together today's schedule
                   if (day_type == "normal") {
+                    //if there isn't already an entry for this day of the week, make one
                     if (!schedule[moment(e.start.dateTime).format('dddd')]) {
                       schedule[moment(e.start.dateTime).format('dddd')] = {}
                     }
@@ -320,7 +325,40 @@
           }
         }
 
-
+        function format_summary(summary) {
+          //the events are all gonna be named according to the classes you take; this is supposed to find the actual names of the blocks which are applicable to everyone (A-block, etc.)
+          let formatted;
+          if (summary.toLowerCase().includes("clubs ")) {
+            return false
+          }
+          else if (summary.includes("(A)") {
+            return "A"
+          }
+          else if (summary.includes("(B)") {
+            return "B"
+          }
+          else if (summary.includes("(C)") {
+            return "C"
+          }
+          else if (summary.includes("(D)") {
+            return "D"
+          }
+          else if (summary.includes("(E)") {
+            return "E"
+          }
+          else if (summary.includes("(F)") {
+            return "F"
+          }
+          else if (summary.includes("(MM)") {
+            return "Morning Meeting"
+          }
+          else if (summary.includes("(ADV)") {
+            return "Tutorial"
+          }
+          else if (summary.toLowerCase().includes("(imm)") {
+            return "Immersive"
+          }
+        }
 
 
     </script>
