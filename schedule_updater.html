@@ -54,7 +54,7 @@
         await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
         await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
         await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
-        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
+//        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
 
         //flag the files we modified to get ready to commit
         await git.add({fs, dir, filepath: 'schedule.json'})
@@ -199,7 +199,7 @@
           }
           document.getElementById('signout_button').style.visibility = 'visible';
           document.getElementById('authorize_button').innerText = 'Refresh';
-          await listConnectionNames();
+          await getCalendarEvents();
         };
 
         if (gapi.client.getToken() === null) {
@@ -229,11 +229,9 @@
       /**
        * Print the display name if available for 10 connections.
        */
-      async function listConnectionNames() {
+      async function getCalendarEvents() {
         let response;
-//        try {
-          // Fetch first 10 files
-          console.log(await gapi.client.calendar)
+//          console.log(await gapi.client.calendar)
           response = await gapi.client.calendar.events.list({
   					'calendarId': calendarId,
   					'timeZone': userTimeZone,
@@ -276,7 +274,7 @@
                     //this is used later to make sure we name the immersive schedule correctly
                     var immersive_name = e.summary.replace(/ /g, '')
                   }
-                  else if (e.summary.toLowerCase().includes("break")){
+                  else if (e.summary.toLowerCase().includes("no school")){
                     day_type="break"
                     //if its a break, and the break has just started, then add a new entry in the breaks date ranges
                     if (!breaks[e.summary.replace(/ /g, '')]){
