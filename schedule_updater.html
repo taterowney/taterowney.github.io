@@ -265,11 +265,11 @@
                   else if (e.summary.toLowerCase().includes("no school")){
                     day_type="break"
                     //if its a break, and the break has just started, then add a new entry in the breaks date ranges
-                    if (!breaks[e.summary.replace(/ /g, '')]){
-                      breaks[e.summary.replace(/ /g, '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
+                    if (!breaks[e.summary.replace("NO SCHOOL - ", '').replace("(ENT)")]){
+                      breaks[e.summary.replace("NO SCHOOL - ", '').replace("(ENT)", '')] = [moment(e.start.date).format("YYYY/MM/DD"), moment(e.start.date).format("YYYY/MM/DD")]
                     }
                     else {
-                      breaks[e.summary.replace(/ /g, '')][1] = moment(e.start.date).format("YYYY/MM/DD")
+                      breaks[e.summary.replace("NO SCHOOL - ", '').replace("(ENT)", '')][1] = moment(e.start.date).format("YYYY/MM/DD")
                     }
                   }
                   else if (e.summary.toLowerCase().includes("immersive")){
