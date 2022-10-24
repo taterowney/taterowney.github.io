@@ -300,19 +300,25 @@
                     if (!schedule[moment(e.start.dateTime).format('dddd')]) {
                       schedule[moment(e.start.dateTime).format('dddd')] = {}
                     }
-                    schedule[moment(e.start.dateTime).format('dddd')][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    if (format_summary(e.summary)) {
+                      schedule[moment(e.start.dateTime).format('dddd')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    }
                   }
                   else if (day_type == "special schedule") {
                     if (!special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")]) {
                       special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")] = {}
                     }
-                    special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    if (format_summary(e.summary)) {
+                      special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    }
                   }
                   else if (day_type == "immersive") {
                     if (!immersives[immersive_name + ' Schedule']) {
                       immersives[immersive_name + ' Schedule'] = {}
                     }
-                    immersives[immersive_name + ' Schedule'][e.summary] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    if (format_summary(e.summary)) {
+                      immersives[immersive_name + ' Schedule'][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    }
                   }
                 }
               }
@@ -326,8 +332,7 @@
         }
 
         function format_summary(summary) {
-          //the events are all gonna be named according to the classes you take; this is supposed to find the actual names of the blocks which are applicable to everyone (A-block, etc.)
-          let formatted;
+          //the events are all gonna be named according to the classes you take; this is supposed to find the actual names of the blocks which are applicable to everyone (A, B, etc.)
           if (summary.toLowerCase().includes("clubs ")) {
             return false
           }
