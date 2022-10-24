@@ -288,36 +288,41 @@
               }
               for (let i=0; i<events.length; ++i) {
                 let e = events[i]
+                let prev_starttime = 0
                 if (!isAllDay(e)) {
-//they don't do headers for immersives for some reason, so the events are checked to see if they are immersives
-                  if (e.summary.toLowerCase().includes("(imm)") || e.summary.toLowerCase().includes("immersive")) {
-                    day_type="immersive"
-                    var immersive_name = e.summary.replace(/ /g, '')
-                  }
-                  //check all of the not all-day events to put together today's schedule
-                  if (day_type == "normal") {
-                    //if there isn't already an entry for this day of the week, make one
-                    if (!schedule[moment(e.start.dateTime).format('dddd')]) {
-                      schedule[moment(e.start.dateTime).format('dddd')] = {}
+                  //check to make sure there's no overlapping events (some people may have things on their schedule like Choices and Flex at the same time)
+                  if (e.start.dateTime!=prev_starttime) {
+                    prev_starttime = e.start.dateTime
+                    //they don't do headers for immersives for some reason, so the events are checked to see if they are immersives
+                    if (e.summary.toLowerCase().includes("(imm)") || e.summary.toLowerCase().includes("immersive")) {
+                      day_type="immersive"
+                      var immersive_name = e.summary.replace(/ /g, '')
                     }
-                    if (format_summary(e.summary)) {
-                      schedule[moment(e.start.dateTime).format('dddd')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    //check all of the not all-day events to put together today's schedule
+                    if (day_type == "normal") {
+                      //if there isn't already an entry for this day of the week, make one
+                      if (!schedule[moment(e.start.dateTime).format('dddd')]) {
+                        schedule[moment(e.start.dateTime).format('dddd')] = {}
+                      }
+                      if (format_summary(e.summary)) {
+                        schedule[moment(e.start.dateTime).format('dddd')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                      }
                     }
-                  }
-                  else if (day_type == "special schedule") {
-                    if (!special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")]) {
-                      special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")] = {}
+                    else if (day_type == "special schedule") {
+                      if (!special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")]) {
+                        special_schedule[moment(e.start.dateTime).format("YYYY/MM/DD")] = {}
+                      }
+                      if (format_summary(e.summary)) {
+                        special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                      }
                     }
-                    if (format_summary(e.summary)) {
-                      special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
-                    }
-                  }
-                  else if (day_type == "immersive") {
-                    if (!immersives[immersive_name + ' Schedule']) {
-                      immersives[immersive_name + ' Schedule'] = {}
-                    }
-                    if (format_summary(e.summary)) {
-                      immersives[immersive_name + ' Schedule'][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                    else if (day_type == "immersive") {
+                      if (!immersives[immersive_name + ' Schedule']) {
+                        immersives[immersive_name + ' Schedule'] = {}
+                      }
+                      if (format_summary(e.summary)) {
+                        immersives[immersive_name + ' Schedule'][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                      }
                     }
                   }
                 }
