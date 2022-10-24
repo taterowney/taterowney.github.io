@@ -334,35 +334,37 @@
         function format_summary(summary) {
           //the events are all gonna be named according to the classes you take; this is supposed to find the actual names of the blocks which are applicable to everyone (A, B, etc.)
           if (summary.toLowerCase().includes("clubs ")) {
-//            return false
-              console.log("test")
+            return false
           }
-          else if (summary.includes("(A)") {
+          else if (summary.includes("(A)")) {
             return "A"
           }
-          else if (summary.includes("(B)") {
+          else if (summary.includes("(B)")) {
             return "B"
           }
-          else if (summary.includes("(C)") {
+          else if (summary.includes("(C)")) {
             return "C"
           }
-          else if (summary.includes("(D)") {
+          else if (summary.includes("(D)")) {
             return "D"
           }
-          else if (summary.includes("(E)") {
+          else if (summary.includes("(E)")) {
             return "E"
           }
-          else if (summary.includes("(F)") {
+          else if (summary.includes("(F)")) {
             return "F"
           }
-          else if (summary.includes("(MM)") {
+          else if (summary.includes("(MM)")) {
             return "Morning Meeting"
           }
-          else if (summary.includes("(ADV)") {
+          else if (summary.includes("(ADV)")) {
             return "Advisory"
           }
-          else if (summary.toLowerCase().includes("(imm)") {
+          else if (summary.toLowerCase().includes("(imm)")) {
             return "Immersive"
+          }
+          else {
+            return false
           }
         }
 
