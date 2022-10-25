@@ -20,32 +20,32 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment@2/moment.min.js"></script>
     <script type="module">
       import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
-      async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
-        //if the page is closed before this function completes, there is still some junk lying around in the folder we are using
-        //this tries to clean it up
-        try {
-          await pfs.rename(dir, "/old")
-        }
-        catch {
-          console.log("directory cleaned up!")
-        }
+      //if the page is closed before this function completes, there is still some junk lying around in the folder we are using
+      //this tries to clean it up
+      try {
+        await pfs.rename(dir, "/old")
+      }
+      catch {
+        console.log("directory cleaned up!")
+      }
 
-        //make a new directory
-        await pfs.mkdir(dir);
-      //  await git.init({ fs, dir })
-        console.log(await pfs.readdir(dir));
-        console.log("waiting for commit request to go through...")
-        //clone the info from the github repo
-        console.log(await git.clone({
-          fs,
-          http,
-          dir,
-          corsProxy: 'https://cors.isomorphic-git.org',
-          url: 'https://github.com/taterowney/taterowney.github.io.git',
-          ref: 'main',
-          singleBranch: true,
-          depth: 10
-        }));
+      //make a new directory
+      await pfs.mkdir(dir);
+    //  await git.init({ fs, dir })
+      console.log(await pfs.readdir(dir));
+      console.log("waiting for commit request to go through...")
+      //clone the info from the github repo
+      console.log(await git.clone({
+        fs,
+        http,
+        dir,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        url: 'https://github.com/taterowney/taterowney.github.io.git',
+        ref: 'main',
+        singleBranch: true,
+        depth: 10
+      }));
+      async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
         //log all of the stuff which has been cloned
         console.log(await pfs.readdir(dir));
 
@@ -54,8 +54,7 @@
         await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
         await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
         await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
-        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
-        console.log(typeof(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' })))
+//        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
 
         //flag the files we modified to get ready to commit
         await git.add({fs, dir, filepath: 'schedule.json'})
@@ -106,11 +105,18 @@
       window.dir = '/test'
       const dir = '/test'
 
+      const reset = true
+
       //stuff which we're going to write to the JSON files (named according to which file they will write to)
-      var schedule = {}
-      var special_schedule = {}
-      var immersives = {}
-      var breaks = {}
+      if (reset) {
+        var schedule = {}
+        var special_schedule = {}
+        var immersives = {}
+        var breaks = {}
+      }
+      else {
+        var schedule = NaN
+      }
       var all_events = {}
 
       //find if a calendar event is all-day
