@@ -45,6 +45,14 @@
         singleBranch: true,
         depth: 10
       }));
+
+      async function get_current_schedule() {
+        schedule = JSON.parse(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
+        special_schedule = JSON.parse(await pfs.readFile(dir+'/special_schedule.json', { encoding: 'utf8' }))
+        immersives = JSON.parse(await pfs.readFile(dir+'/immersives.json', { encoding: 'utf8' }))
+        breaks = JSON.parse(await pfs.readFile(dir+'/breaks.json', { encoding: 'utf8' }))
+      }
+
       async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
         //log all of the stuff which has been cloned
         console.log(await pfs.readdir(dir));
@@ -91,6 +99,8 @@
         await pfs.rename(dir, "/old");
       }
       window.upload = upload_to_github
+
+      window.get_current_schedule = get_current_schedule
 //      document.getElementById("push_to_github").onclick = "upload_to_github(schedule, special_schedule, immersives, breaks)"
 //      document.getElementById("push_to_github").style.display = "block"
 //      document.getElementById("push_to_github").addEventListener("click", upload_to_github(schedule, special_schedule, immersives, breaks))
@@ -108,15 +118,10 @@
       const reset = true
 
       //stuff which we're going to write to the JSON files (named according to which file they will write to)
-      if (reset) {
-        var schedule = {}
-        var special_schedule = {}
-        var immersives = {}
-        var breaks = {}
-      }
-      else {
-        var schedule = NaN
-      }
+      var schedule = {}
+      var special_schedule = {}
+      var immersives = {}
+      var breaks = {}
       var all_events = {}
 
       //find if a calendar event is all-day
