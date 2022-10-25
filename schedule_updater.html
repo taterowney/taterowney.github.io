@@ -298,13 +298,13 @@
                   }
                 }
               }
+              let prev_starttime = 0
+              let prev_endtime = 0
               for (let i=0; i<events.length; ++i) {
                 let e = events[i]
-                let prev_starttime = 0
                 if (!isAllDay(e)) {
                   //check to make sure there's no overlapping events (some people may have things on their schedule like Choices and Flex at the same time)
                   if (e.start.dateTime!=prev_starttime) {
-                    prev_starttime = e.start.dateTime
                     //they don't do headers for immersives for some reason, so the events are checked to see if they are immersives
                     if (e.summary.toLowerCase().includes("(imm)") || e.summary.toLowerCase().includes("immersive")) {
                       day_type="immersive"
@@ -318,6 +318,10 @@
                       }
                       if (format_summary(e.summary)) {
                         schedule[moment(e.start.dateTime).format('dddd')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                        //the schedule doesn't include lunch periods, so we have to detect these
+                        if ((moment(e.start.dateTime).format("Hm") - moment(prev_endtime).format("Hm") > 20) && (['11', '12', '13'].includes(moment(e.start.dateTime).format('H')))) {
+                          schedule[moment(e.start.dateTime).format('dddd')]["Lunch"] = [[moment(prev_endtime).format('H'), moment(prev_endtime).format('m')], [moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')]]
+                        }
                       }
                     }
                     else if (day_type == "special schedule") {
@@ -326,6 +330,9 @@
                       }
                       if (format_summary(e.summary)) {
                         special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
+                        if ((moment(e.start.dateTime).format("Hm") - moment(prev_endtime).format("Hm") > 20) && (['11', '12', '13'].includes(moment(e.start.dateTime).format('H')))) {
+                          schedule[moment(e.start.dateTime).format('dddd')]["Lunch"] = [[moment(prev_endtime).format('H'), moment(prev_endtime).format('m')], [moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')]]
+                        }
                       }
                     }
                     else if (day_type == "immersive") {
@@ -336,6 +343,8 @@
                         immersives[immersive_name + ' Schedule'][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
                       }
                     }
+                    prev_starttime = e.start.dateTime
+                    prev_endtime = e.end.dateTime
                   }
                 }
               }
