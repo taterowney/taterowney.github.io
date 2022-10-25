@@ -54,7 +54,8 @@
         await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
         await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
         await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
-//        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
+        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
+        console.log(typeof(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' })))
 
         //flag the files we modified to get ready to commit
         await git.add({fs, dir, filepath: 'schedule.json'})
