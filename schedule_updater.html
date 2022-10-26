@@ -5,8 +5,39 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    <p>Bayclock Schedule Updater</p>
+    <h4>Bayclock Schedule Updater</h4>
 
+    <p>This is a wizard meant to update the Bayclock schedule. This process will probably need to be performed about every 5-6 months</p>
+
+    <br>
+
+    <p>
+      Before you start, you will need to download your academic schedule into Google Calendar. <strong>If you have already done this step before, you DON'T need to repeat it.</strong>
+      Navigate to <a href="https://bayschoolsf.myschoolapp.com/app/student#calendar">MyBay</a>,
+      find the black bar on top of the calendar, and press the button on it which looks like a wifi symbol, second from the right. You should
+      see a menu pop up, titled "WebCal Feed for External Calendar". Under the section labeled "My Calendars", click on the text labeled "individual
+      calendar feeds". A list should drop down containing individual calendars for different types of events. Find the blue hyperlink reading
+      "Schedule", right-click on it, and press "Copy Link Address".
+    </p>
+    <p>
+      Now open Google Calendar. In the left-hand bar, scroll down until you see a section labeled "Other Calendars". Press the "+" button next to it, and select "From URL".
+      Paste the url you just copied into the box, then press "Add Calendar". You may have to wait a bit for the events to appear, but you should see
+      your classes appear as events on your calendar.
+    </p>
+
+    <br>
+    <br>
+    <p>
+      If you have your class schedule in Google Calendar, find the appropriate entry in the sidebar on the left (it should look like "webcal://bayscoolsf...."),
+      and press the three dots next to it. Scroll down to the bottom of the page and find the section labeled "Integrate Calendar", then copy the Calendar ID.
+      Press the button below this text and paste in the Calendar ID.
+    </p>
+    <button id="gcalIDbutton" onclick="setCalendarID()">Input Calendar ID</button>
+    <p>
+      Now press the button below labeled "Authorize", and sign into your Google account. You will then be prompted for
+      a "Github API token". This token will be stored in a location which I haven't figured out yet. Don't store this insecurely:
+      anyone with this key can modify all files in the Github account.
+    </p>
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
