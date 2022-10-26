@@ -169,8 +169,8 @@
 
       const userTimeZone = "America/Los_Angeles"
 
-      const calendarId = 'ftksveaat9n9bccofnidta4rb79oprsh@import.calendar.google.com'
-
+//      const calendarId = 'ftksveaat9n9bccofnidta4rb79oprsh@import.calendar.google.com'
+      var calendarID
 
       // Discovery doc URL for APIs used by the quickstart
 //      const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/people/v1/rest';
@@ -280,7 +280,7 @@
   					'timeZone': userTimeZone,
   					'singleEvents': true,
   					'timeMin': (moment().add(-24, "hours")).toISOString(), //gathers events from 1 day ago forward
-  					'maxResults': 100,
+  					'maxResults': 1000,
   					'orderBy': 'startTime'
   				})
           console.log((moment().add(-24, "hours")).toISOString())
@@ -428,6 +428,9 @@
           }
         }
 
+        function setCalendarID() {
+          calendarID = prompt("Paste the Calendar ID here: ")
+        }
 
     </script>
 <!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
