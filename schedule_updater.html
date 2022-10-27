@@ -315,7 +315,7 @@
                       breaks[e.summary.replace("NO SCHOOL", '').replace("(ENT)", '').replace("-", '').trim()][1] = moment(e.start.date).format("YYYY/MM/DD")
                     }
                   }
-                  else if (e.summary.toLowerCase().includes("immersive")){
+                  else if (e.summary.toLowerCase().includes("(imm)")){
                     day_type="immersive"
                     //if its an immersive, and the immersive has just started, then add a new entry in the immersives date ranges
                     if (!immersives[e.summary.replace(/ /g, '')]){
@@ -339,6 +339,13 @@
                     //they don't do headers for immersives for some reason, so the events are checked to see if they are immersives
                     if (e.summary.toLowerCase().includes("(imm)") || e.summary.toLowerCase().includes("immersive")) {
                       day_type="immersive"
+                      if (!immersives[get_immersive_name(e.summary)]){
+                        immersives[get_immersive_name(e.summary)] = [moment(e.start.dateTime).format("YYYY/MM/DD"), moment(e.start.dateTime).format("YYYY/MM/DD")]
+                      }
+                      console.log(moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days'))
+                      else if (moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days') < 20) {
+                        immersives[get_immersive_name(e.summary)][1] = moment(e.start.dateTime).format("YYYY/MM/DD")
+                      }
                       var immersive_name = e.summary.replace(/ /g, '')
                     }
                     //check all of the not all-day events to put together today's schedule
@@ -426,6 +433,19 @@
           else {
             return false
           }
+        }
+
+        function get_immersive_name(summary) {
+            if (summary.includes("1")) {
+              return "Immersive1"
+            }
+            else if (summary.includes("2")) {
+              return "Immersive2"
+            }
+            else if (summary.includes("3")) {
+              //you never know...
+              return "Immersive3"
+            }
         }
 
         function setCalendarID() {
