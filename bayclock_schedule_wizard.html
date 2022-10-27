@@ -351,7 +351,7 @@
                       else if (moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days') < 20) {
                         immersives[get_immersive_name(e.summary)][1] = moment(e.start.dateTime).format("YYYY/MM/DD")
                       }
-                      console.log(moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days'))
+//                      console.log(moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days'))
                       var immersive_name = get_immersive_name(e.summary)
                     }
                     //check all of the not all-day events to put together today's schedule
@@ -391,8 +391,10 @@
                         immersives[immersive_name + ' Schedule'][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
                       }
                     }
-                    prev_starttime = e.start.dateTime
-                    prev_endtime = e.end.dateTime
+                    if (format_summary(e.summary)) {
+                      prev_starttime = e.start.dateTime
+                      prev_endtime = e.end.dateTime
+                    }
                   }
                 }
               }
