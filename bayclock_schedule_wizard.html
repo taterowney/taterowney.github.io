@@ -75,7 +75,7 @@
         http,
         dir,
         corsProxy: 'https://cors.isomorphic-git.org',
-        url: 'https://github.com/taterowney/bayclock_data',
+        url: 'https://github.com/taterowney/bayclock_data.git',
         ref: 'main',
         singleBranch: true,
         depth: 10
@@ -112,12 +112,12 @@
           message: 'Updated Schedule!',
           author: {
             name: 'Bayclock Schedule Wizard',
-            email: 'taterowney@gmail.com'
+            email: 'bayclock@bayschoolsf.org'
           }
         })
 
         const onAuth = () => ({
-//          username: 'tate-r',
+          username: 'taterowney',
           token: prompt("Paste Github token:"),
         })
 
@@ -363,8 +363,8 @@
                         //the schedule doesn't include lunch periods, so we have to detect these
                         if (((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))) > 20) && (['11', '12', '13'].includes(moment(e.start.dateTime).format('H')))) {
                           schedule[moment(e.start.dateTime).format('dddd')]["Lunch"] = [[moment(prev_endtime).format('H'), moment(prev_endtime).format('m')], [moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')]]
-                          console.log((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))))
-                          console.log("lunch!!")
+//                          console.log((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))))
+//                          console.log("lunch!!")
                         }
                       }
                     }
@@ -376,7 +376,7 @@
                         special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')][format_summary(e.summary)] = [[moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')], [moment(e.end.dateTime).format('H'), moment(e.end.dateTime).format('m')]]
                         if (((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))) > 20) && (prev_endtime!=0) && (['11', '12', '13'].includes(moment(e.start.dateTime).format('H')))) {
                           special_schedule[moment(e.start.dateTime).format('YYYY/MM/DD')]["Lunch"] = [[moment(prev_endtime).format('H'), moment(prev_endtime).format('m')], [moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')]]
-                          console.log("lunch!!")
+//                          console.log("lunch!!")
                         }
                       }
                     }
