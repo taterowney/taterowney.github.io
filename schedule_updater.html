@@ -342,7 +342,7 @@
                       if (!immersives[get_immersive_name(e.summary)]){
                         immersives[get_immersive_name(e.summary)] = [moment(e.start.dateTime).format("YYYY/MM/DD"), moment(e.start.dateTime).format("YYYY/MM/DD")]
                       }
-                      console.log(moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days'))
+//                      console.log(moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days'))
                       else if (moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days') < 20) {
                         immersives[get_immersive_name(e.summary)][1] = moment(e.start.dateTime).format("YYYY/MM/DD")
                       }
