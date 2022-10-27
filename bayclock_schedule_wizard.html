@@ -365,8 +365,9 @@
                         //the schedule doesn't include lunch periods, so we have to detect these
                         if (((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))) > 20) && (['11', '12', '13'].includes(moment(e.start.dateTime).format('H')))) {
                           schedule[moment(e.start.dateTime).format('dddd')]["Lunch"] = [[moment(prev_endtime).format('H'), moment(prev_endtime).format('m')], [moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')]]
-//                          console.log((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))))
-//                          console.log("lunch!!")
+                          console.log((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))))
+                          console.log(e.start.dateTime)
+                          console.log(prev_endtime)
                         }
                       }
                     }
