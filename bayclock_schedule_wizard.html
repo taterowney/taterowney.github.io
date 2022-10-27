@@ -159,6 +159,8 @@
       var breaks = {}
       var all_events = {}
 
+      var immersive_name_map = {}
+
       //find if a calendar event is all-day
       function isAllDay(entry) {
         if (!entry.start.dateTime){
@@ -440,16 +442,10 @@
         }
 
         function get_immersive_name(summary) {
-            if (summary.includes("1")) {
-              return "Immersive1"
+            if (!immersive_name_map[summary]) {
+              immersive_name_map[summary] = "Immersive"+JSON.stringify(Object.keys(immersive_name_map).length+1)
             }
-            else if (summary.includes("2")) {
-              return "Immersive2"
-            }
-            else if (summary.includes("3")) {
-              //you never know...
-              return "Immersive3"
-            }
+            return immersive_name_map[summary]
         }
 
         function setCalendarID() {
