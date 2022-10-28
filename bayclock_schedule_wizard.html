@@ -67,11 +67,10 @@
 
       //make a new directory
       await pfs.mkdir(dir);
-    //  await git.init({ fs, dir })
-      console.log(await pfs.readdir(dir));
+//      console.log(await pfs.readdir(dir));
       console.log("waiting for commit request to go through...")
       //clone the info from the github repo
-      console.log(await git.clone({
+      await git.clone({
         fs,
         http,
         dir,
@@ -80,7 +79,7 @@
         ref: 'main',
         singleBranch: true,
         depth: 10
-      }));
+      });
 
       async function get_current_schedule() {
         schedule = JSON.parse(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
@@ -91,14 +90,13 @@
 
       async function upload_to_github(schedule_content, special_schedule_content, immersives_content, breaks_content) {
         //log all of the stuff which has been cloned
-        console.log(await pfs.readdir(dir));
+//        console.log(await pfs.readdir(dir));
 
         //write all the data we've gathered from gcal to their respective files
         await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content).replaceAll(',', ',\n'), 'utf8')
         await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content).replaceAll(',', ',\n'), 'utf8')
         await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content).replaceAll(',', ',\n'), 'utf8')
         await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content).replaceAll(',', ',\n'), 'utf8')
-//        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
 
         //flag the files we modified to get ready to commit
         await git.add({fs, dir, filepath: 'schedule.json'})
@@ -117,7 +115,7 @@
           }
         })
 
-        console.log(sha)
+//        console.log(sha)
 
         const onAuth = () => ({
           username: 'bayclock_wizard',
@@ -133,7 +131,7 @@
           ref: 'main',
           onAuth,
         })
-        console.log(pushResult)
+        console.log("Successfully pushed to Github!")
         await pfs.rename(dir, "/old");
       }
       window.upload = upload_to_github
@@ -198,7 +196,6 @@
        */
       function gapiLoaded() {
         gapi.load('client', initializeGapiClient);
-        console.log(gapi)
       }
 
       /**
@@ -210,7 +207,6 @@
           apiKey: API_KEY,
           discoveryDocs: [DISCOVERY_DOC],
         });
-        console.log("inited")
         gapiInited = true;
         maybeEnableButtons();
       }
@@ -225,7 +221,6 @@
           callback: '', // defined later
         });
         gisInited = true;
-        console.log(tokenClient)
         maybeEnableButtons();
       }
 
@@ -289,7 +284,6 @@
   					'maxResults': 2000,
   					'orderBy': 'startTime'
   				})
-          console.log((moment().add(-24, "hours")).toISOString())
 
 
           if (response.result.items) {
@@ -365,9 +359,6 @@
                         //the schedule doesn't include lunch periods, so we have to detect these
                         if (((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))) > 20) && (['11', '12', '13'].includes(moment(e.start.dateTime).format('H')))) {
                           schedule[moment(e.start.dateTime).format('dddd')]["Lunch"] = [[moment(prev_endtime).format('H'), moment(prev_endtime).format('m')], [moment(e.start.dateTime).format('H'), moment(e.start.dateTime).format('m')]]
-                          console.log((Number(moment(e.start.dateTime).format("H"))*60 + Number(moment(e.start.dateTime).format("m")) - Number(moment(prev_endtime).format("H"))*60 - Number(moment(prev_endtime).format("m"))))
-                          console.log(e.start.dateTime)
-                          console.log(prev_endtime)
                         }
                       }
                     }
@@ -399,10 +390,10 @@
                 }
               }
             }
-            console.log(schedule)
-            console.log(special_schedule)
-            console.log(immersives)
-            console.log(breaks)
+//            console.log(schedule)
+//            console.log(special_schedule)
+//            console.log(immersives)
+//            console.log(breaks)
             window.upload(schedule, special_schedule, immersives, breaks)
           }
         }
