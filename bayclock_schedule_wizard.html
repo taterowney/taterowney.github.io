@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
   </head>
   <body>
+    <!-- if you thought I was gonna add CSS you are mistaken -->
     <h4>Bayclock Schedule Updater</h4>
 
     <p>This is a wizard meant to update the Bayclock schedule. This process will probably need to be performed about every 5-6 months</p>
@@ -33,6 +34,7 @@
       Press the button below this text and paste in the Calendar ID. If you wish to, you can instead use a custom-made calendar (if the one from MyBay is missing
       something important, for example). Repeat the same procedure if you wish to do that. The calendar doesn't have to be published.
     </p>
+    <!-- button to set calendar ID -->
     <button id="gcalIDbutton" onclick="setCalendarID()">Input Calendar ID</button>
     <p>
       Now press the button below labeled "Authorize", and sign into your Google account. You will probably see a screen claiming that "Google hasn't verified this app"
@@ -73,9 +75,12 @@
       Problems? Email <a href="https://mail.google.com/mail/?view=cm&fs=1&to=bayclock@bayschoolsf.org&su=Bayclock%20Bug%20Report" target="_blank">bayclock@bayschoolsf.org</a> to report a bug.
     </p>
 
+    <!-- isomorphic-git libraries-->
     <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
     <script src="https://unpkg.com/isomorphic-git"></script>
+    <!-- moment.js (used for time calculations)-->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment@2/moment.min.js"></script>
+    <!-- script for github API integration (has to be a module to import some more stuff)-->
     <script type="module">
       import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
       window.http = http
@@ -162,6 +167,9 @@
 
       window.get_current_schedule = get_current_schedule
     </script>
+
+
+    <!-- Main script: sign into Google Account, get calendar data, format data-->
     <script type="text/javascript">
       //isomorphic-git stuff
       // Initialize isomorphic-git with a file system
@@ -172,6 +180,8 @@
       window.dir = '/bayclock_data'
       const dir = '/bayclock_data'
 
+
+      //adding functionality in the future to merge the data of multiple calendars
       const reset = true
 
       //stuff which we're going to write to the JSON files (named according to which file they will write to)
@@ -179,6 +189,7 @@
       var special_schedule = {}
       var immersives = {}
       var breaks = {}
+
       var all_events = {}
 
       var immersive_name_map = {}
@@ -191,17 +202,19 @@
         return false
       }
 
-      // TODO(developer): Set to client ID and API key from the Developer Console
+      // TODO(developer): Set to client ID and API key from the Developer Console of actual bayclock account
       const CLIENT_ID = '123769375139-u7hb25ugflb0b8a22jrkhk5eeaoood9u.apps.googleusercontent.com';
       const API_KEY = 'AIzaSyDvhWlAAxXDqWW4rdPM9lBTBQ4G0lCNk1s';
 
+
+      //if Bay ever decides to move to Australia, this should change
       const userTimeZone = "America/Los_Angeles"
 
-//      const calendarId = 'ftksveaat9n9bccofnidta4rb79oprsh@import.calendar.google.com'
+      //this will be set by the user
       var calendarId = ""
 
-      // Discovery doc URL for APIs used by the quickstart
-//      const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/people/v1/rest';
+
+//    the source for the protocol with which to grab GCal Data
       const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'
 
       // Authorization scopes required by the API; multiple scopes can be
@@ -212,6 +225,7 @@
       let gapiInited = false;
       let gisInited = false;
 
+      //hide the signin/out buttons until they're ready
       document.getElementById('authorize_button').style.visibility = 'hidden';
       document.getElementById('signout_button').style.visibility = 'hidden';
 
@@ -295,11 +309,10 @@
       }
 
       /**
-       * Print the display name if available for 10 connections.
+       * Grab calendar events and format them
        */
       async function getCalendarEvents() {
         let response;
-//          console.log(await gapi.client.calendar)
           response = await gapi.client.calendar.events.list({
   					'calendarId': calendarId,
   					'timeZone': userTimeZone,
@@ -313,7 +326,6 @@
           if (response.result.items) {
             response.result.items.forEach(function(entry) {
               //classify events by date; each element in the dictionary is one calendar day w/ an array of events on that day
-          //            console.log(moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD"))
               if (!all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")]) {
                 all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")] = new Array()
               }
@@ -353,6 +365,7 @@
                   }
                 }
               }
+              //keep track of the times the previous events have started and ended
               let prev_starttime = 0
               let prev_endtime = 0
               for (let i=0; i<events.length; ++i) {
@@ -360,16 +373,18 @@
                 if (!isAllDay(e)) {
                   //check to make sure there's no overlapping events (some people may have things on their schedule like Choices and Flex at the same time)
                   if (e.start.dateTime!=prev_starttime) {
-                    //they don't do headers for immersives for some reason, so the events are checked to see if they are immersives
+                    //they don't do all day events for immersives for some reason, so the events are checked to see if they are immersives
                     if (e.summary.toLowerCase().includes("(imm)") || e.summary.toLowerCase().includes("immersive")) {
                       day_type="immersive"
+                      //if this is an immersive that hasn't been seen before, make a new entry
                       if (!immersives[get_immersive_name(e.summary)]){
                         immersives[get_immersive_name(e.summary)] = [moment(e.start.dateTime).format("YYYY/MM/DD"), moment(e.start.dateTime).format("YYYY/MM/DD")]
                       }
+                      //to protect against name overlap in immersives
                       else if (moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days') < 20) {
                         immersives[get_immersive_name(e.summary)][1] = moment(e.start.dateTime).format("YYYY/MM/DD")
                       }
-//                      console.log(moment(e.start.dateTime).diff(moment(immersives[get_immersive_name(e.summary)][1]), 'days'))
+                      //used later for the immersive schedule
                       var immersive_name = get_immersive_name(e.summary)
                     }
                     //check all of the not all-day events to put together today's schedule
@@ -460,6 +475,7 @@
         }
 
         function get_immersive_name(summary) {
+          //make logical names for each of the immersives
             if (!immersive_name_map[summary]) {
               immersive_name_map[summary] = "Immersive"+JSON.stringify(Object.keys(immersive_name_map).length+1)
             }
@@ -467,11 +483,13 @@
         }
 
         function setCalendarID() {
+          //prompt the user to pastre in the ID of their Calendar
           calendarId = prompt("Paste the Calendar ID here: ")
         }
 
     </script>
 <!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
+<!-- scripts for google APIs-->
      <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
      <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 <!--     <script async defer src="https://apis.google.com/js/api.js" onload="maybe_begin_auth()"></script>
