@@ -30,11 +30,12 @@
     <p>
       If you have your class schedule in Google Calendar, find the appropriate entry in the sidebar on the left (it should look like "webcal://bayscoolsf...."),
       and press the three dots next to it. Scroll down to the bottom of the page and find the section labeled "Integrate Calendar", then copy the Calendar ID.
-      Press the button below this text and paste in the Calendar ID.
+      Press the button below this text and paste in the Calendar ID. If you wish to, you can instead use a custom-made calendar (if the one from MyBay is missing
+      something important, for example). Repeat the same procedure if you wish to do that. The calendar doesn't have to be published.
     </p>
     <button id="gcalIDbutton" onclick="setCalendarID()">Input Calendar ID</button>
     <p>
-      Now press the button below labeled "Authorize", and sign into your Google account. You will probably see a screen saying that "Google hasn't verified this app"
+      Now press the button below labeled "Authorize", and sign into your Google account. You will probably see a screen claiming that "Google hasn't verified this app"
       (because they haven't 😢); click on the gray text in the bottom left labeled "Advanced" and press the link saying "go to __________.github.io". (In general, if you aren't
       sure that the developer is not malicious, you should NEVER do this; however, I have no intention of taking over your google account :), contact me if you have
       further security concerns).
@@ -46,9 +47,22 @@
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
-    <p style="display:none;" id="success_message">Successfully updated schedule!</p>
+    <p style="display:none;" id="success_message"><strong>Successfully updated schedule!</strong></p>
 
     <br>
+    <br>
+
+    <h4>Debugging:</h4>
+    <p>
+      The following things will cause problems with the code:
+      <ul>
+        <li>Two breaks or immersives with the same name</li>
+        <li>Lunchtime ending before 11:00 AM or after 2:00PM</li>
+        <li>The calendar provided doesn't use the same formatting as MyBay (classes have the block name in parenthesis, there is an all-day event labeled "SPECIAL SCHEDULE" on days which the schedule is different, etc.)</li>
+        <li>The Github API token has expired (to fix this, log into the bayclock github account, go to <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">access token settings</a>
+          ; if you don't see any active tokens make a new one with access to the correct repository)</li>
+      </ul>
+    </p>
 
     <p>
       Problems? Email <a href="https://mail.google.com/mail/?view=cm&fs=1&to=bayclock@bayschoolsf.org&su=Bayclock%20Bug%20Report" target="_blank">bayclock@bayschoolsf.org</a> to report a bug.
