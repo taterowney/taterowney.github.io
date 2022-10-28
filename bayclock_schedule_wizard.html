@@ -94,10 +94,10 @@
         console.log(await pfs.readdir(dir));
 
         //write all the data we've gathered from gcal to their respective files
-        await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content), 'utf8')
-        await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content), 'utf8')
-        await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content), 'utf8')
-        await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content), 'utf8')
+        await pfs.writeFile(dir+'/schedule.json', JSON.stringify(schedule_content).replace(',', ',\n'), 'utf8')
+        await pfs.writeFile(dir+'/special_schedule.json', JSON.stringify(special_schedule_content).replace(',', ',\n'), 'utf8')
+        await pfs.writeFile(dir+'/immersives.json', JSON.stringify(immersives_content).replace(',', ',\n'), 'utf8')
+        await pfs.writeFile(dir+'/breaks.json', JSON.stringify(breaks_content).replace(',', ',\n'), 'utf8')
 //        console.log(await pfs.readFile(dir+'/schedule.json', { encoding: 'utf8' }))
 
         //flag the files we modified to get ready to commit
