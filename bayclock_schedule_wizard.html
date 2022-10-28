@@ -34,15 +34,19 @@
     </p>
     <button id="gcalIDbutton" onclick="setCalendarID()">Input Calendar ID</button>
     <p>
-      Now press the button below labeled "Authorize", and sign into your Google account. You will then be prompted for
-      a "Github API token". This token will be stored in a location which I haven't figured out yet. Don't store this insecurely:
-      anyone with this key can modify all files in the Github account.
+      Now press the button below labeled "Authorize", and sign into your Google account. You will probably see a screen saying that "Google hasn't verified this app"
+      (because they haven't 😢); click on the gray text in the bottom left labeled "Advanced" and press the link saying "go to __________.github.io". (In general, if you aren't
+      sure that the developer is not malicious, you should NEVER do this; however, I have no intention of taking over your google account :), contact me if you have
+      further security concerns).
+    </p>
+    <p>
+      You will then be prompted for a "Github API token". This token will be stored in a location which I haven't figured out yet. Don't store this insecurely:
+      anyone with this key can modify all files in the Github repository. Once you have pasted this in, you should be good to go!
     </p>
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
     <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
-
-    <pre id="content" style="white-space: pre-wrap;"></pre>
+    <p style="display:none;" id="success_message">Successfully updated schedule!</p>
 
     <br>
 
@@ -133,6 +137,7 @@
         })
         console.log("Successfully pushed to Github!")
         await pfs.rename(dir, "/old");
+        document.getElementById("success_message").style.display = "block"
       }
       window.upload = upload_to_github
 
@@ -450,5 +455,7 @@
 <!--    <script async defer src="https://apis.google.com/js/client:plusone.js" type="application/javascript" onload="gapiLoaded()"></script> -->
      <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
      <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+<!--     <script async defer src="https://apis.google.com/js/api.js" onload="maybe_begin_auth()"></script>
+     <script async defer src="https://accounts.google.com/gsi/client" onload="maybe_begin_auth()"></script> -->
   </body>
 </html>
