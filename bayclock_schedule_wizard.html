@@ -343,12 +343,12 @@ this thing was made with so much jank anyway-->
 
             //since they kinda just leave it blank when Summer Break happens, we have to detect that
             for (let i=0; i<(Object.keys(all_events).length-1); ++i) {
-              if (Math.abs(moment(Object.keys(all_events)[i]).diff(moment(Object.keys(all_events)[i+1]), "days")) > 1) {
-                breaks["Summer Break"] = [moment(Object.keys(all_events)[i]).add(1, "days").format("YYYY/MM/DD"), moment(Object.keys(all_events)[i+1]).add(-1, "days").format("YYYY/MM/DD")]
+              if (Math.abs(moment(Object.keys(all_events)[i]).diff(moment(Object.keys(all_events)[i+1]), "days")) > 3) {
+                breaks["SUMMER BREAK"] = [moment(Object.keys(all_events)[i]).add(1, "days").format("YYYY/MM/DD"), moment(Object.keys(all_events)[i+1]).add(-1, "days").format("YYYY/MM/DD")]
               }
             }
-            if (!breaks["Summer Break"]) {
-              breaks["Summer Break"] = [moment(Object.keys(all_events)[Object.keys(all_events).length-1]).add(1, "days").format("YYYY/MM/DD"), moment(Object.keys(all_events)[Object.keys(all_events).length-1]).add(100, "days").format("YYYY/MM/DD")]
+            if (!breaks["SUMMER BREAK"]) {
+              breaks["SUMMER BREAK"] = [moment(Object.keys(all_events)[Object.keys(all_events).length-1]).add(1, "days").format("YYYY/MM/DD"), moment(Object.keys(all_events)[Object.keys(all_events).length-1]).add(100, "days").format("YYYY/MM/DD")]
             }
             console.log(breaks)
 
