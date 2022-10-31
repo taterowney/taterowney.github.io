@@ -5,7 +5,8 @@
     <meta charset="utf-8" />
   </head>
   <body>
-    <!-- if you thought I was gonna add CSS you are mistaken -->
+    <!-- if you thought I was gonna add CSS you are gravely mistaken
+this thing was made with so much jank anyway-->
     <h4>Bayclock Schedule Updater</h4>
 
     <p>This is a wizard meant to update the Bayclock schedule. This process will probably need to be performed about every 5-6 months</p>
@@ -171,6 +172,11 @@
 
     <!-- Main script: sign into Google Account, get calendar data, format data-->
     <script type="text/javascript">
+
+    //yes I know this is all in one file and its sloppy
+    //if you want to improve it in that regard go ahead, but be careful that everything loads
+    //with the right priority, otherwise things get weird
+
       //isomorphic-git stuff
       // Initialize isomorphic-git with a file system
       window.fs = new LightningFS('fs')
@@ -331,6 +337,20 @@
               }
               all_events[moment(entry.start.dateTime || entry.start.date).format("YYYY/MM/DD")].push(entry)
             })
+
+
+            //since they kinda just leave it blank when Summer Break happens, we have to detect that
+            for (let i=0; i<(Object.keys(all_events).length-1); ++i) {
+              if (diff(moment(Object.keys(all_events)[i]), moment(Object.keys(all_events)[i+1]), "days") > 1) {
+                breaks["Summer Break"] = [moment(Object.keys(all_events)[i]).add(1, "days").format("YYYY/MM/DD"), moment(Object.keys(all_events)[i+1]).add(-1, "days").format("YYYY/MM/DD")]
+              }
+            }
+            if (!breaks["Summer Break"]) {
+              breaks["Summer Break"] = [moment(Object.keys(all_events)[Object.keys(all_events).length-1]).add(1, "days").format("YYYY/MM/DD"), moment(Object.keys(all_events)[Object.keys(all_events).length-1]).add(100, "days").format("YYYY/MM/DD")]
+            }
+            console.log(breaks)
+
+
             //loop through events by date
             for (const [date, events] of Object.entries(all_events)) {
               let day_type = "normal"
