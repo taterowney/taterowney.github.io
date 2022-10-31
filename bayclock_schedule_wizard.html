@@ -79,7 +79,7 @@ this thing was made with so much jank anyway-->
     <!-- isomorphic-git libraries-->
     <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
     <script src="https://unpkg.com/isomorphic-git"></script>
-    <!-- moment.js (used for time calculations)-->
+    <!-- moment.js (used for time calculations), a real life saver here-->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment@2/moment.min.js"></script>
     <!-- script for github API integration (has to be a module to import some more stuff)-->
     <script type="module">
@@ -103,7 +103,9 @@ this thing was made with so much jank anyway-->
         fs,
         http,
         dir,
+        //we're using isomorphic-git's personal proxy server (don't stream too much data or they'll kick you off)
         corsProxy: 'https://cors.isomorphic-git.org',
+        //TODO: set target url to the actual repo
         url: 'https://github.com/taterowney/bayclock_data.git',
         ref: 'main',
         singleBranch: true,
@@ -216,7 +218,7 @@ this thing was made with so much jank anyway-->
       //if Bay ever decides to move to Australia, this should change
       const userTimeZone = "America/Los_Angeles"
 
-      //this will be set by the user
+      //this will be set by user input
       var calendarId = ""
 
 
@@ -341,7 +343,7 @@ this thing was made with so much jank anyway-->
 
             //since they kinda just leave it blank when Summer Break happens, we have to detect that
             for (let i=0; i<(Object.keys(all_events).length-1); ++i) {
-              if (diff(moment(Object.keys(all_events)[i]), moment(Object.keys(all_events)[i+1]), "days") > 1) {
+              if (Math.abs(moment(Object.keys(all_events)[i]).diff(moment(Object.keys(all_events)[i+1]), "days")) > 1) {
                 breaks["Summer Break"] = [moment(Object.keys(all_events)[i]).add(1, "days").format("YYYY/MM/DD"), moment(Object.keys(all_events)[i+1]).add(-1, "days").format("YYYY/MM/DD")]
               }
             }
