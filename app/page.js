@@ -64,7 +64,17 @@ export default function Page() {
             <Spacer height='8rem'/>
             <FadeContainer>
                 <Heading>Contact Me</Heading>
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '2rem', width:'40rem', alignContent: 'center', justifyContent: 'center', marginLeft: '20rem', marginRight: '40rem' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: '2rem',
+                        width: 'fit-content',
+                        margin: 'auto',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
                     <SocialLink href="https://github.com/taterowney" icon_path={'/github.png'} />
                     <SocialLink href="https://github.com/taterowney" icon_path={'/github.png'} />
                     <SocialLink href="https://github.com/taterowney" icon_path={'/github.png'} />

@@ -87,20 +87,21 @@ export function Topbar({ children }) {
           left: 0,
           right: 0,
           zIndex: 1000,
-          height: '2rem',
-          backgroundColor: 'white',
-          padding: '1rem',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          height: '15vh',
+          backgroundColor: 'rgba(255,255,255,0.95)',
+          backdropFilter: 'blur(10px)',
+          padding: '0 10%',
+          boxShadow: '0px 2px 2px 1px rgba(0,0,0,0.2)',
           transition: 'opacity 0.25s',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-        }}
+          }}
       >
         {children}
       </div>
       {/* spacer */}
-      <div style={{ height: '3rem' }} />
+      <div style={{ height: '15vh' }} />
     </>
   );
 }
@@ -135,6 +136,8 @@ export function Logo() {
 }
 
 export function NavItem({ children, target_id, style, ...props }) {
+  const [hover, setHover] = useState(false);
+
   return (
     <a
       href={`#${target_id}`}
@@ -142,10 +145,24 @@ export function NavItem({ children, target_id, style, ...props }) {
         e.preventDefault();
         scrollToBookmark(target_id);
       }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       style={{
         textDecoration: 'none',
-        color: 'blue',
+        color: hover ? 'white' : '#00007c',
         cursor: 'pointer',
+        padding: '0 1rem',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '5px',
+        fontSize: hover ? '1.2em' : '1em',
+        backgroundColor: hover ? '#00007c' : 'transparent',
+        transition:
+          'color 0.5s ease, background-color 0.5s ease, font-size 0.5s ease, transform 0.3s ease',
+        transform: hover ? 'scale(1.05)' : 'scale(1)',
+        userSelect: 'none',
         ...style,
       }}
       {...props}
@@ -160,10 +177,12 @@ export function TitleHeading({ children, style, ...props }) {
     <h1
       {...props}
       style={{
-        marginTop: '1rem',
-        fontSize: '5rem',
+        fontSize: '6em',
+        marginLeft: '5%',
+        marginTop: '5%',
         width: '100%',
         textAlign: 'center',
+        fontWeight: 400,
         ...style,
       }}
     >
@@ -177,10 +196,12 @@ export function Heading({ children, style, ...props }) {
     <h2
       {...props}
       style={{
-        marginTop: '1rem',
-        fontSize: '3.5rem',
+        fontSize: '4.5em',
+        marginLeft: '5%',
+        marginTop: '5%',
         width: '100%',
         textAlign: 'center',
+        fontWeight: 400,
         ...style,
       }}
     >
@@ -194,10 +215,15 @@ export function Subheading({ children, style, ...props }) {
     <h3
       {...props}
       style={{
-        marginTop: '1rem',
-        fontSize: '2rem',
-        width: '100%',
+        fontSize: '2em',
+        width: 'fit-content',
+        padding: '1%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: '0.5em',
+        marginBottom: '0.5em',
         textAlign: 'center',
+        fontWeight: 400,
         ...style,
       }}
     >
@@ -212,12 +238,14 @@ export function Spacer({ height = '4rem' }) {
 
 
 
-const BOX_WIDTH = 400; // px: Only one fully visible at a time
+const BOX_WIDTH = 600; // px: approximate width for each project
 
 export function ProjectCarousel({ children }) {
   const ref = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [prevHover, setPrevHover] = useState(false);
+  const [nextHover, setNextHover] = useState(false);
   const count = React.Children.count(children);
 
   // --- drag-to-scroll logic (marks interaction) ---
@@ -309,22 +337,33 @@ export function ProjectCarousel({ children }) {
       style={{
         position: 'relative',
         width: `${BOX_WIDTH}px`,
-        maxWidth: '90vw',
-        margin: '2rem auto',
+        maxWidth: '80vw',
+        margin: '3rem auto',
       }}
     >
       {/* ← Wrap-around Prev */}
       <button
         onClick={handlePrev}
+        onMouseEnter={() => setPrevHover(true)}
+        onMouseLeave={() => setPrevHover(false)}
         style={{
           position: 'absolute',
           top: '50%',
           left: 0,
           transform: 'translate(-50%, -50%)',
           zIndex: 1,
-          fontSize: '1.5rem',
-          background: 'rgba(255,255,255,0.8)',
+          fontSize: '1.25rem',
+          backgroundColor: prevHover ? 'rgb(60,67,119)' : 'rgb(148,148,148)',
+          color: 'white',
           border: 'none',
+          borderRadius: '50%',
+          width: '0.9em',
+          height: '0.9em',
+          lineHeight: '0.9em',
+          textAlign: 'center',
+          padding: '0.9em',
+          transition: 'background-color 0.5s ease, box-shadow 0.5s ease',
+          boxShadow: prevHover ? '1px 1px 5px rgba(0,0,0,0.75)' : 'none',
           cursor: 'pointer',
         }}
       >
@@ -358,8 +397,9 @@ export function ProjectCarousel({ children }) {
               flex: '0 0 auto',
               scrollSnapAlign: 'center',
               borderRadius: '0.75rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              boxShadow: '1px 1px 2px 1px rgba(0,0,0,0.4)',
               background: 'rgba(247,249,252,1)',
+              maxHeight: '15em',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -374,15 +414,26 @@ export function ProjectCarousel({ children }) {
       {/* → Wrap-around Next */}
       <button
         onClick={handleNext}
+        onMouseEnter={() => setNextHover(true)}
+        onMouseLeave={() => setNextHover(false)}
         style={{
           position: 'absolute',
           top: '50%',
           right: 0,
           transform: 'translate(50%, -50%)',
           zIndex: 1,
-          fontSize: '1.5rem',
-          background: 'rgba(255,255,255,0.8)',
+          fontSize: '1.25rem',
+          backgroundColor: nextHover ? 'rgb(60,67,119)' : 'rgb(148,148,148)',
+          color: 'white',
           border: 'none',
+          borderRadius: '50%',
+          width: '0.9em',
+          height: '0.9em',
+          lineHeight: '0.9em',
+          textAlign: 'center',
+          padding: '0.9em',
+          transition: 'background-color 0.5s ease, box-shadow 0.5s ease',
+          boxShadow: nextHover ? '1px 1px 5px rgba(0,0,0,0.75)' : 'none',
           cursor: 'pointer',
         }}
       >
@@ -405,6 +456,8 @@ export function SocialLink({ href, icon_path }) {
         height: '5rem',
         width: '5rem',
         display: 'inline-block',
+        margin: '1em',
+        borderRadius: '5px',
       }}
     />
   );
