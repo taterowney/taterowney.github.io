@@ -87,7 +87,7 @@ export function Topbar({ children }) {
           left: 0,
           right: 0,
           zIndex: 1000,
-          height: '15vh',
+          height: '10vh',
           backgroundColor: 'rgba(255,255,255,0.95)',
           backdropFilter: 'blur(10px)',
           padding: '0 10%',
@@ -137,6 +137,7 @@ export function Logo() {
 
 export function NavItem({ children, target_id, style, ...props }) {
   const [hover, setHover] = useState(false);
+  const [active, setActive] = useState(false);
 
   return (
     <a
@@ -152,7 +153,7 @@ export function NavItem({ children, target_id, style, ...props }) {
         color: hover ? 'white' : '#00007c',
         cursor: 'pointer',
         padding: '0 1rem',
-        height: '100%',
+        height: '80%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -163,6 +164,7 @@ export function NavItem({ children, target_id, style, ...props }) {
           'color 0.5s ease, background-color 0.5s ease, font-size 0.5s ease, transform 0.3s ease',
         transform: hover ? 'scale(1.05)' : 'scale(1)',
         userSelect: 'none',
+        fontSize: '1.5rem',
         ...style,
       }}
       {...props}
@@ -178,9 +180,11 @@ export function TitleHeading({ children, style, ...props }) {
       {...props}
       style={{
         fontSize: '6em',
-        marginLeft: '5%',
-        marginTop: '5%',
+        marginTop: '2rem',
         width: '100%',
+        padding: '0px',
+        marginLeft: '0px',
+        marginRight: '0px',
         textAlign: 'center',
         fontWeight: 400,
         ...style,
@@ -197,7 +201,6 @@ export function Heading({ children, style, ...props }) {
       {...props}
       style={{
         fontSize: '4.5em',
-        marginLeft: '5%',
         marginTop: '5%',
         width: '100%',
         textAlign: 'center',
@@ -237,8 +240,10 @@ export function Spacer({ height = '4rem' }) {
 }
 
 
+// TODO: change width when screen narrow
+//    bug when double-tapping arrow keys
 
-const BOX_WIDTH = 600; // px: approximate width for each project
+const BOX_WIDTH = 900; // px: approximate width for each project
 
 export function ProjectCarousel({ children }) {
   const ref = useRef(null);
@@ -337,8 +342,10 @@ export function ProjectCarousel({ children }) {
       style={{
         position: 'relative',
         width: `${BOX_WIDTH}px`,
+        // height: '20em',
         maxWidth: '80vw',
         margin: '3rem auto',
+        padding: '1rem',
       }}
     >
       {/* ← Wrap-around Prev */}
@@ -350,24 +357,31 @@ export function ProjectCarousel({ children }) {
           position: 'absolute',
           top: '50%',
           left: 0,
-          transform: 'translate(-50%, -50%)',
+          transform: 'translate(-20%, -50%)',
           zIndex: 1,
           fontSize: '1.25rem',
           backgroundColor: prevHover ? 'rgb(60,67,119)' : 'rgb(148,148,148)',
           color: 'white',
           border: 'none',
           borderRadius: '50%',
-          width: '0.9em',
-          height: '0.9em',
+          width: '20px',
+          height: '20px',
           lineHeight: '0.9em',
           textAlign: 'center',
-          padding: '0.9em',
+          padding: '20px',
           transition: 'background-color 0.5s ease, box-shadow 0.5s ease',
           boxShadow: prevHover ? '1px 1px 5px rgba(0,0,0,0.75)' : 'none',
           cursor: 'pointer',
         }}
       >
-        ‹
+        <span
+          style={{
+            display: 'inline-block',
+            transform: 'translate(-40%, -60%)',
+          }}
+        >
+          ‹
+        </span>
       </button>
 
       {/* scrollable carousel */}
@@ -383,7 +397,7 @@ export function ProjectCarousel({ children }) {
           width: '100%',
           borderRadius: '1.25rem',
           boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-          background: 'white',
+          backgroundColor: 'rgba(255,255,255,0.1)',
           scrollbarWidth: 'none',
         }}
         className="hide-scrollbar"
@@ -392,18 +406,20 @@ export function ProjectCarousel({ children }) {
           <div
             key={i}
             style={{
-              minWidth: `${BOX_WIDTH}px`,
-              maxWidth: `${BOX_WIDTH}px`,
+              minWidth: `${BOX_WIDTH-110}px`,
+              maxWidth: `${BOX_WIDTH-110}px`,
               flex: '0 0 auto',
               scrollSnapAlign: 'center',
               borderRadius: '0.75rem',
               boxShadow: '1px 1px 2px 1px rgba(0,0,0,0.4)',
-              background: 'rgba(247,249,252,1)',
-              maxHeight: '15em',
+              background: 'rgba(205, 208, 214, 0.75)',
+              height: '20em',
+              maxHeight: '20em',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems: 'left',
+              justifyContent: 'left',
               transition: 'box-shadow 0.3s',
+              padding: '3rem',
             }}
           >
             {child}
@@ -420,24 +436,31 @@ export function ProjectCarousel({ children }) {
           position: 'absolute',
           top: '50%',
           right: 0,
-          transform: 'translate(50%, -50%)',
+          transform: 'translate(110%, -50%)',
           zIndex: 1,
           fontSize: '1.25rem',
           backgroundColor: nextHover ? 'rgb(60,67,119)' : 'rgb(148,148,148)',
           color: 'white',
           border: 'none',
           borderRadius: '50%',
-          width: '0.9em',
-          height: '0.9em',
+          width: '20px',
+          height: '20px',
           lineHeight: '0.9em',
           textAlign: 'center',
-          padding: '0.9em',
+          padding: '20px',
           transition: 'background-color 0.5s ease, box-shadow 0.5s ease',
           boxShadow: nextHover ? '1px 1px 5px rgba(0,0,0,0.75)' : 'none',
           cursor: 'pointer',
         }}
       >
-        ›
+        <span
+          style={{
+            display: 'inline-block',
+            transform: 'translate(-40%, -60%)',
+          }}
+        >
+          ›
+        </span>
       </button>
     </div>
   );
@@ -462,3 +485,161 @@ export function SocialLink({ href, icon_path }) {
     />
   );
 }
+
+
+
+
+export function EmailIcon({ children, icon_path }) {
+  const [hovered, setHovered] = useState(false);
+  const [tooltipHovered, setTooltipHovered] = useState(false);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [tooltipPos, setTooltipPos] = useState(null);
+
+  // Tooltip offset in px
+  const offset = { x: 24, y: 8 };
+  const showTooltip = hovered || tooltipHovered;
+
+  // Lock the tooltip position when showing
+  const handleMouseEnter = (e) => {
+    setHovered(true);
+    setTooltipPos({ x: e.clientX, y: e.clientY });
+  };
+
+  // Do not update tooltipPos if tooltip is already visible
+  const handleMouseMove = (e) => {
+    if (!showTooltip) {
+      setMouse({ x: e.clientX, y: e.clientY });
+      setTooltipPos({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+    setTooltipPos(null);
+  };
+
+  return (
+    <>
+      <div
+      className="transition-transform duration-200 transform hover:scale-110 hover:shadow-lg"
+      style={{
+        backgroundSize: 'cover',
+        backgroundImage: `url(${icon_path})`,
+        height: '5rem',
+        width: '5rem',
+        display: 'inline-block',
+        margin: '1em',
+        borderRadius: '5px',
+          position: 'relative',
+      }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+      />
+      {showTooltip && tooltipPos && (
+        <div
+          style={{
+            position: 'fixed',
+            left: tooltipPos.x + offset.x,
+            top: tooltipPos.y + offset.y,
+            zIndex: 10000,
+            background: 'white',
+            color: '#222',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+            borderRadius: '8px',
+            padding: '0.85em 1.25em',
+            fontSize: '1em',
+            pointerEvents: 'auto',
+            maxWidth: 360,
+            minWidth: 120,
+            transition: 'opacity 0.2s',
+            opacity: 0.98,
+          }}
+          onMouseEnter={() => setTooltipHovered(true)}
+          onMouseLeave={() => setTooltipHovered(false)}
+        >
+          {children}
+        </div>
+      )}
+    </>
+  );
+}
+
+export function ExpandingBox({ text, children, style, ...props }) {
+  const [expanded, setExpanded] = useState(false);
+  const boxRef = useRef(null);
+
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+  };
+
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+
+    // Set initial height based on content
+    if (expanded) {
+      el.style.height = `${el.scrollHeight}px`;
+    } else {
+      el.style.height = '0px';
+    }
+  }, [expanded]);
+
+  return (
+    <div
+      {...props}
+      style={{
+        margin: '1em auto',
+        width: '100%',
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        ...style,
+      }}
+    >
+      <h3
+        onClick={toggleExpand}
+        style={{
+          fontSize: '2em',
+          width: 'fit-content',
+          padding: '1%',
+          margin: 0,
+          textAlign: 'center',
+          fontWeight: 400,
+          color : expanded ? 'rgba(0, 0, 128, 0.5)' : '#000',
+          borderRadius: '0.5em',
+          transition: 'color 0.3s',
+          userSelect: 'none',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        {expanded ? "Collapse" : text}
+      </h3>
+      <div
+        ref={boxRef}
+        style={{
+          overflow: 'hidden',
+          transition: 'height 0.4s cubic-bezier(0.4,0.0,0.2,1)',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        {expanded && (
+          <div style={{ padding: '1em', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {children}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function IntroAnimation({ children }) {
+  return <>
+    {children}
+  </>
+} 
