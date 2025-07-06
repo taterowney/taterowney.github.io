@@ -81,7 +81,7 @@ export function Topbar({ children }) {
   const [narrow, setNarrow] = useState(false);
 
   useEffect(() => {
-    const update = () => setNarrow(window.innerWidth < 600);
+    const update = () => setNarrow(window.innerWidth < 800);
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
@@ -274,16 +274,17 @@ export function Spacer({ height = '4rem' }) {
 // bug when double-tapping arrow keys
 
 const DEFAULT_BOX_WIDTH = 900; // px: approximate width for each project
-const NARROW_BOX_WIDTH = 600;
+const NARROW_BOX_WIDTH = 400;
 
 function getBoxWidth() {
   if (typeof window === 'undefined') return DEFAULT_BOX_WIDTH;
-  return window.innerWidth < 700 ? NARROW_BOX_WIDTH : DEFAULT_BOX_WIDTH;
+  // return window.innerWidth < 700 ? NARROW_BOX_WIDTH : DEFAULT_BOX_WIDTH;
+  return Math.min(DEFAULT_BOX_WIDTH, window.innerWidth * 0.8);
 }
 
 export function ProjectCarousel({ children }) {
   const ref = useRef(null);
-  const [boxWidth, setBoxWidth] = useState(getBoxWidth());
+  const [boxWidth, setBoxWidth] = useState(DEFAULT_BOX_WIDTH);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [prevHover, setPrevHover] = useState(false);
@@ -698,14 +699,15 @@ export function IntroAnimation({ children }) {
     const total = waitTime + logoBlueText.length + logoBlackText.length;
 
     if (tick <= total) {
-      const id = setTimeout(() => setTick(tick + 1), 100);
+      const id = setTimeout(() => {setTick(tick + 1)}, 100);
       return () => clearTimeout(id);
     }
 
     if (!slideOut) {
       setSlideOut(true);
-      const id = setTimeout(() => setHidden(true), 500);
-      return () => clearTimeout(id);
+      const id = setTimeout(() => {setHidden(true)}, 300);
+      // return () => clearTimeout(id);
+      return () => {}
     }
   }, [tick, hidden, slideOut]);
 
@@ -751,7 +753,7 @@ export function IntroAnimation({ children }) {
             <span
               style={{
                 fontFamily: 'Courier New',
-                fontSize: '8em',
+                fontSize: '10vw',
                 backgroundColor: '#00007c',
                 color: 'white',
                 borderRadius: '5px',
@@ -764,7 +766,7 @@ export function IntroAnimation({ children }) {
             <span
               style={{
                 fontFamily: 'Courier New',
-                fontSize: '8em',
+                fontSize: '10vw',
                 color: 'black',
                 marginLeft: blue ? '0.2rem' : 0,
               }}
