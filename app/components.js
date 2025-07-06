@@ -78,6 +78,18 @@ export function FadeContainer({ children }) {
 
 
 export function Topbar({ children }) {
+  const [narrow, setNarrow] = useState(false);
+
+  useEffect(() => {
+    const update = () => setNarrow(window.innerWidth < 600);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const barHeight = narrow ? '15vh' : '10vh';
+  const spacerHeight = narrow ? '20vh' : '15vh';
+
   return (
     <>
       <div
@@ -87,7 +99,7 @@ export function Topbar({ children }) {
           left: 0,
           right: 0,
           zIndex: 1000,
-          height: '10vh',
+          height: barHeight,
           backgroundColor: 'rgba(255,255,255,0.95)',
           backdropFilter: 'blur(10px)',
           padding: '0 10%',
@@ -101,7 +113,7 @@ export function Topbar({ children }) {
         {children}
       </div>
       {/* spacer */}
-      <div style={{ height: '15vh' }} />
+      <div style={{ height: spacerHeight }} />
     </>
   );
 }
@@ -139,6 +151,26 @@ export function NavItem({ children, target_id, style, ...props }) {
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
 
+  // mark active when its target section is in view
+  useEffect(() => {
+    const section = document.getElementById(target_id);
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
+      { rootMargin: '-30% 0px -60% 0px' }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [target_id]);
+
+  const backgroundColor = active
+    ? 'rgba(0,0,0,0.1)'
+    : hover
+    ? '#00007c'
+    : 'transparent';
+  const color = hover && !active ? 'white' : '#00007c';
+
   return (
     <a
       href={`#${target_id}`}
@@ -150,7 +182,7 @@ export function NavItem({ children, target_id, style, ...props }) {
       onMouseLeave={() => setHover(false)}
       style={{
         textDecoration: 'none',
-        color: hover ? 'white' : '#00007c',
+        color,
         cursor: 'pointer',
         padding: '0 1rem',
         height: '80%',
@@ -158,10 +190,9 @@ export function NavItem({ children, target_id, style, ...props }) {
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '5px',
-        fontSize: hover ? '1.2em' : '1em',
-        backgroundColor: hover ? '#00007c' : 'transparent',
+        backgroundColor,
         transition:
-          'color 0.5s ease, background-color 0.5s ease, font-size 0.5s ease, transform 0.3s ease',
+          'color 0.5s ease, background-color 0.5s ease, transform 0.3s ease',
         transform: hover ? 'scale(1.05)' : 'scale(1)',
         userSelect: 'none',
         fontSize: '1.5rem',
@@ -240,18 +271,31 @@ export function Spacer({ height = '4rem' }) {
 }
 
 
-// TODO: change width when screen narrow
-//    bug when double-tapping arrow keys
+// bug when double-tapping arrow keys
 
-const BOX_WIDTH = 900; // px: approximate width for each project
+const DEFAULT_BOX_WIDTH = 900; // px: approximate width for each project
+const NARROW_BOX_WIDTH = 600;
+
+function getBoxWidth() {
+  if (typeof window === 'undefined') return DEFAULT_BOX_WIDTH;
+  return window.innerWidth < 700 ? NARROW_BOX_WIDTH : DEFAULT_BOX_WIDTH;
+}
 
 export function ProjectCarousel({ children }) {
   const ref = useRef(null);
+  const [boxWidth, setBoxWidth] = useState(getBoxWidth());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [prevHover, setPrevHover] = useState(false);
   const [nextHover, setNextHover] = useState(false);
   const count = React.Children.count(children);
+
+  useEffect(() => {
+    const update = () => setBoxWidth(getBoxWidth());
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   // --- drag-to-scroll logic (marks interaction) ---
   useEffect(() => {
@@ -303,12 +347,12 @@ export function ProjectCarousel({ children }) {
     const el = ref.current;
     if (!el) return;
     const onScroll = () => {
-      const idx = Math.round(el.scrollLeft / BOX_WIDTH) % count;
+      const idx = Math.round(el.scrollLeft / boxWidth) % count;
       setCurrentIndex(idx);
     };
     el.addEventListener('scroll', onScroll);
     return () => el.removeEventListener('scroll', onScroll);
-  }, [count]);
+  }, [count, boxWidth]);
 
   // --- auto-cycle until first interaction ---
   useEffect(() => {
@@ -319,13 +363,13 @@ export function ProjectCarousel({ children }) {
       scrollToIndex(next);
     }, 5000);
     return () => clearInterval(id);
-  }, [hasInteracted, currentIndex, count]);
+  }, [hasInteracted, currentIndex, count, boxWidth]);
 
   // --- scroll helpers ---
   const scrollToIndex = (idx) => {
     const el = ref.current;
     if (!el) return;
-    el.scrollTo({ left: idx * BOX_WIDTH, behavior: 'smooth' });
+    el.scrollTo({ left: idx * boxWidth, behavior: 'smooth' });
   };
 
   const handleNext = () => {
@@ -341,7 +385,7 @@ export function ProjectCarousel({ children }) {
     <div
       style={{
         position: 'relative',
-        width: `${BOX_WIDTH}px`,
+        width: `${boxWidth}px`,
         // height: '20em',
         maxWidth: '80vw',
         margin: '3rem auto',
@@ -406,8 +450,8 @@ export function ProjectCarousel({ children }) {
           <div
             key={i}
             style={{
-              minWidth: `${BOX_WIDTH-110}px`,
-              maxWidth: `${BOX_WIDTH-110}px`,
+              minWidth: `${boxWidth - 110}px`,
+              maxWidth: `${boxWidth - 110}px`,
               flex: '0 0 auto',
               scrollSnapAlign: 'center',
               borderRadius: '0.75rem',
@@ -639,7 +683,105 @@ export function ExpandingBox({ text, children, style, ...props }) {
 }
 
 export function IntroAnimation({ children }) {
-  return <>
-    {children}
-  </>
-} 
+  const logoBlueText = 'Tate';
+  const logoBlackText = 'Rowney';
+  const waitTime = 12; // ticks before typing begins
+
+  const [tick, setTick] = useState(0);
+  const [slideOut, setSlideOut] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  // advance the animation frame
+  useEffect(() => {
+    if (hidden) return;
+
+    const total = waitTime + logoBlueText.length + logoBlackText.length;
+
+    if (tick <= total) {
+      const id = setTimeout(() => setTick(tick + 1), 100);
+      return () => clearTimeout(id);
+    }
+
+    if (!slideOut) {
+      setSlideOut(true);
+      const id = setTimeout(() => setHidden(true), 500);
+      return () => clearTimeout(id);
+    }
+  }, [tick, hidden, slideOut]);
+
+  let blue = '';
+  let black = '';
+
+  if (tick < waitTime) {
+    black = Math.floor(tick / 4) % 2 === 0 ? '_' : '';
+  } else if (tick < waitTime + logoBlueText.length) {
+    black = '_';
+    blue = logoBlueText.substring(0, tick - waitTime + 1);
+  } else if (tick < waitTime + logoBlueText.length + logoBlackText.length) {
+    blue = logoBlueText;
+    black =
+      logoBlackText.substring(0, tick - waitTime - logoBlueText.length + 1) +
+      '_';
+  } else {
+    blue = logoBlueText;
+    black = logoBlackText;
+  }
+
+  return (
+    <>
+      {!hidden && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '90vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            background: 'transparent',
+            transform: slideOut ? 'translateY(-100%)' : 'translateY(0)',
+            opacity: slideOut ? 0 : 1,
+            transition: 'transform 0.5s, opacity 0.5s',
+            zIndex: 1000,
+          }}
+        >
+          <p style={{ margin: 0 }}>
+            <span
+              style={{
+                fontFamily: 'Courier New',
+                fontSize: '8em',
+                backgroundColor: '#00007c',
+                color: 'white',
+                borderRadius: '5px',
+                padding: '0 0.1em',
+                display: blue ? 'inline' : 'none',
+              }}
+            >
+              {blue}
+            </span>
+            <span
+              style={{
+                fontFamily: 'Courier New',
+                fontSize: '8em',
+                color: 'black',
+                marginLeft: blue ? '0.2rem' : 0,
+              }}
+            >
+              {black}
+            </span>
+          </p>
+        </div>
+      )}
+      <div
+        style={{
+          opacity: hidden ? 1 : 0,
+          transition: 'opacity 1s',
+        }}
+      >
+        {children}
+      </div>
+    </>
+  );
+}
