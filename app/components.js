@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState, useCallback, HTMLAttributes } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState, useCallback, HTMLAttributes, useReducer } from 'react';
 
 
 export const Bookmark = forwardRef(({ id, children, style }, ref) => {
@@ -108,6 +108,8 @@ export function Topbar({ children }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          paddingLeft: narrow ? '1rem' : '5rem',
+          paddingRight: narrow ? '1rem' : '9rem',
           }}
       >
         {children}
@@ -120,56 +122,107 @@ export function Topbar({ children }) {
 
 
 export function Logo() {
+  const [narrow, setNarrow] = useState(false);
+
+  useEffect(() => {
+    const update = () => setNarrow(window.innerWidth < 800);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const [superNarrow, setSuperNarrow] = useState(false);
+  useEffect(() => {
+    const update = () => setSuperNarrow(window.innerWidth < 550);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   return <p>
     <span style={{
-      fontSize: '2rem',
+      fontSize: narrow ? (superNarrow ? '1.25rem' : '1.5rem') : '2rem',
       backgroundColor: '#00007c',
       fontFamily: 'Courier New',
       borderRadius: '5px',
       color: 'white',
       paddingRight: '0.1rem',
       paddingLeft: '0.1rem',
-      marginRight: '0.4rem',
-      fontWeight: 'bold',
+      marginRight: '0.1rem',
+      fontWeight: '600',
       float: 'left',
     }}>Tate</span>
     <span style={{
-      fontSize: '2rem',
+      fontSize: narrow ? (superNarrow ? '1.25rem' : '1.5rem') : '2rem',
       fontFamily: 'Courier New',
       paddingRight: '0rem',
       paddingLeft: '0rem',
       margin: '0px',
       color: 'black',
-      fontWeight: 'bold',
+      fontWeight: '600',
       float: 'left',
     }}
     > Rowney_</span>
   </p>
 }
 
-export function NavItem({ children, target_id, style, ...props }) {
-  const [hover, setHover] = useState(false);
-  const [active, setActive] = useState(false);
 
-  // mark active when its target section is in view
+export function useYLevelScroll(targetId, y = 300) {
+  const [crossed, setCrossed] = useState(false);
+  const prev = useRef(false);          // last value we sent to React
+  const frame = useRef();              // rAF handle
+
   useEffect(() => {
-    const section = document.getElementById(target_id);
-    if (!section) return;
+    const el = document.getElementById(targetId);
+    if (!el) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => setActive(entry.isIntersecting),
-      { rootMargin: '-30% 0px -60% 0px' }
-    );
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, [target_id]);
+    const check = () => {
+      const { top, bottom } = el.getBoundingClientRect();
+      const now = top <= y && bottom >= y;
+      if (now !== prev.current) {
+        prev.current = now;
+        setCrossed(now);
+      }
+    };
 
-  const backgroundColor = active
-    ? 'rgba(0,0,0,0.1)'
-    : hover
-    ? '#00007c'
-    : 'transparent';
-  const color = hover && !active ? 'white' : '#00007c';
+    /** Throttle scroll events down to one per animation frame. */
+    const onScroll = () => {
+      if (frame.current == null) {
+        frame.current = requestAnimationFrame(() => {
+          frame.current = null;
+          check();
+        });
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll); // element moves on resize too
+    check();                                    // run once on mount
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      cancelAnimationFrame(frame.current);
+    };
+  }, [targetId, y]);
+
+  return crossed;
+}
+
+export function NavItem({ children, target_id, style, ...props }) {
+  const [superNarrow, setSuperNarrow] = useState(false);
+  useEffect(() => {
+    const update = () => setSuperNarrow(window.innerWidth < 550);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const [hover, setHover] = useState(false);
+  const active = useYLevelScroll(target_id, 100);
+  const backgroundColor = hover ? (active ? 'rgba(0,0,0,0.1)' : '#00007c') : 'transparent';
+  const color = active ? ('#00007c') : (hover ? 'white' : 'black');
+  const fontWeight = active ? '500' : '200';
 
   return (
     <a
@@ -184,7 +237,7 @@ export function NavItem({ children, target_id, style, ...props }) {
         textDecoration: 'none',
         color,
         cursor: 'pointer',
-        padding: '0 1rem',
+        padding: superNarrow ? '0 0.5rem' : '0 1rem',
         height: '80%',
         display: 'flex',
         alignItems: 'center',
@@ -195,7 +248,8 @@ export function NavItem({ children, target_id, style, ...props }) {
           'color 0.5s ease, background-color 0.5s ease, transform 0.3s ease',
         transform: hover ? 'scale(1.05)' : 'scale(1)',
         userSelect: 'none',
-        fontSize: '1.5rem',
+        fontSize: superNarrow ? '1.25rem' : '1.5rem',
+        fontWeight: fontWeight,
         ...style,
       }}
       {...props}
@@ -271,7 +325,7 @@ export function Spacer({ height = '4rem' }) {
 }
 
 
-// bug when double-tapping arrow keys
+// TODO: narrow screen cuts off images
 
 const DEFAULT_BOX_WIDTH = 900; // px: approximate width for each project
 const NARROW_BOX_WIDTH = 400;
@@ -280,11 +334,23 @@ function getBoxWidth() {
   if (typeof window === 'undefined') return DEFAULT_BOX_WIDTH;
   // return window.innerWidth < 700 ? NARROW_BOX_WIDTH : DEFAULT_BOX_WIDTH;
   return Math.min(DEFAULT_BOX_WIDTH, window.innerWidth * 0.8);
+  
+}
+
+function getBoxHeight() {
+  if (typeof window === 'undefined') return '20em'; // default height
+  if (window.innerWidth < 700) {
+    return '30em';
+  }
+  else {
+    return '20em';
+  } 
 }
 
 export function ProjectCarousel({ children }) {
   const ref = useRef(null);
   const [boxWidth, setBoxWidth] = useState(DEFAULT_BOX_WIDTH);
+  const [boxHeight, setBoxHeight] = useState('20em');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [prevHover, setPrevHover] = useState(false);
@@ -297,6 +363,14 @@ export function ProjectCarousel({ children }) {
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
+
+  useEffect(() => {
+    const update2 = () => setBoxHeight(getBoxHeight());
+    update2();
+    window.addEventListener('resize', update2);
+    return () => window.removeEventListener('resize', update2);
+  }
+  , []);
 
   // --- drag-to-scroll logic (marks interaction) ---
   useEffect(() => {
@@ -458,8 +532,9 @@ export function ProjectCarousel({ children }) {
               borderRadius: '0.75rem',
               boxShadow: '1px 1px 2px 1px rgba(0,0,0,0.4)',
               background: 'rgba(205, 208, 214, 0.75)',
-              height: '20em',
-              maxHeight: '20em',
+              height: boxHeight,
+              maxHeight: '40em',
+              // height: 'fit-content',
               display: 'flex',
               alignItems: 'left',
               justifyContent: 'left',
@@ -726,7 +801,7 @@ export function IntroAnimation({ children }) {
       '_';
   } else {
     blue = logoBlueText;
-    black = logoBlackText;
+    black = logoBlackText + "_";
   }
 
   return (
@@ -786,4 +861,87 @@ export function IntroAnimation({ children }) {
       </div>
     </>
   );
+}
+
+import Image from 'next/image';
+
+export function Project({ children, image_src, alt="" }) {
+  const [isNarrow, setIsNarrow] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsNarrow(window.innerWidth < 700);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: isNarrow ? 'column' : 'row',
+        // alignItems: isNarrow ? 'center' : 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%',
+        position: 'relative',
+        gap: '1rem',
+        paddingTop: '1rem',
+        paddingTop: '1rem',
+      }}
+    >
+      <div style={{ width: '100%' }}>{children}</div>
+      {image_src && (
+        <img
+          src={image_src}
+          alt={alt}
+          style={{
+            width: isNarrow ? '100%' : '50%',
+            height: 'auto',
+            maxHeight: isNarrow ? '50%' : '100%',
+            objectFit: 'contain',
+            borderRadius: '0.75rem',
+            marginBottom: '1rem',
+            backgroundColor: 'white'
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+export function ContactList({ children }) {
+  const [narrow, setNarrow] = useState(false);
+
+  useEffect(() => {
+    const update = () => setNarrow(window.innerWidth < 700);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  return <div
+  style={{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+  }}>
+  <div
+      style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: narrow ? '0.5rem' : '3rem',
+          width: 'fit-content',
+          margin: '0px',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '80%'
+      }}
+  >
+    {children}
+    </div>
+  </div>
 }
