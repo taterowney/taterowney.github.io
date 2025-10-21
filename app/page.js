@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+// import React from 'react';
 import { Bookmark, Heading, TitleHeading, Topbar, Logo, NavItem, Spacer, Subheading, FadeContainer, ProjectCarousel, SocialLink, ExpandingBox, EmailIcon, IntroAnimation, Project, ContactList } from './components.js';
 
 export default function Page() {
@@ -108,12 +108,12 @@ export default function Page() {
                                 </p>
                                 <a href="https://suds-cmu.org/" target="blank">About our organization</a>
                             </Project>
-                            <Project image_src="First-isomorphism-theorem.svg" alt='Image Credit: Michael J. Edwards, Wikipedia, https://en.wikipedia.org/wiki/Isomorphism_theorems#/media/File:First-isomorphism-theorem.svg'>
-                                <h3>Exercises in Formalization</h3>
+                            <Project image_src="/jailbreak_figure.png" alt='Image Credit: Tate Rowney, Xuning Ying. "Distractor-Based Jailbreaking Attacks in Language Models and Associated Changes in Chain-of-Thought Content". AAAI 2026.'>
+                                <h3>Jailbreaking Prevention for AI Safety</h3>
                                 <p>
-                                    Despite their enormous power, formal proof assistants such as "<a href="https://lean-lang.org/" target="blank">Lean 4</a>" are difficult to master due to their complexity and still-emerging ecosystem of documentation. I am fortunate enough to be learning directly from some of this field's preeminent experts; although my journey's just beginning, I've been formalizing some elementary mathematical results, including Noether's Isomorphism Theorems (as pictured here). 
+                                    Myself and a co-author identified a new form of jailbreaking attack in large language models, and analyzed its effects on models' reasoning. Our paper has been accepted for publication at AAAI 2026. 
                                 </p>
-                                <a href="https://github.com/taterowney/IsomorphismTheorems" target="blank">What I have so far</a>
+                                <a href="https://taterowney.com/jailbreak" target="blank">The latest on our paper</a>
                             </Project>
 
                         </ProjectCarousel>

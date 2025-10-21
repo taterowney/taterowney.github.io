@@ -23,7 +23,7 @@ export default function PaperStatus() {
         </strong>
                 
         <strong style={{ fontSize: '1.1em', display: 'block', marginBottom: '20px' }}>
-          The paper is currently submitted to and under review by AAAI (wish us luck!). Please check back here for updates once it's published. Our abstract is as follows:
+          The paper has been accepted for publication in AAAI 2026! A camera-ready version will be out soon, and we will be presenting it at the conference. Our abstract is as follows:
         </strong>
         
         <i style={{ fontSize: '0.9em', display: 'block', marginBottom: '15px', textAlign: 'left' }}>
