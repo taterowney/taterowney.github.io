@@ -52,14 +52,14 @@ export default function Page() {
                                 marginRight: '25%',
                             }}>
                                 <p>
-                                    I'm a second-year undergraduate at Carnegie Mellon University studying Mathematics and Machine Learning. 
-                                    My research is primarily focused on the use of machine learning in <a href="https://leanprover-community.github.io/#what-is-a-proof-assistant" target='_blank'>formal mathematics</a>, 
+                                    I'm a rising third-year undergraduate at Carnegie Mellon University studying Mathematics and Machine Learning. 
+                                    My research is primarily focused on the use of ML in <a href="https://leanprover-community.github.io/#what-is-a-proof-assistant" target='_blank'>formal mathematics</a>, 
                                     where I work with CMU's <a href='https://cmu-l3.github.io/' target='_blank'>L3 Lab</a> and <a href='https://icarm.io/' target='_blank'>The Institute for Computer-Aided Reasoning in Mathematics</a> to invent and develop helpful AI tools for research mathematicians. 
                                     However, I enjoy science in all its forms, and have worked on projects ranging from AI safety to embedded systems engineering. A few of my projects are shown below. 
                                 </p>
                                 <p>
-                                    I'm also in the CMU math department's Honors Program; I'm still working through prerequisite classes, but am currently getting a decent overview of analysis, measure theory, algebra, basic probability, and discrete math. 
-                                    Additionally, I've had the chance to study some machine learning, theoretical computer science, basic systems/algorithm design, and functional programming. 
+                                    I'm also in the CMU math department's Honors Program; I've had the chance to go pretty deep into analysis and abstract algebra through the Math Studies sequence, as well as taking graduate courses in optimization and logic/automated reasoning.
+                                    Additionally, I've also studied some applied machine learning, probability, theoretical computer science, basic systems/algorithm design, and functional programming. 
                                 </p>
                                 <p>In my free time, I love long-distance running, <a href='https://rocketcommand.org/' target="blank">amateur rocketry</a>, and reading.</p>
                             </div>
@@ -133,7 +133,7 @@ export default function Page() {
                         <Heading>Contact Me</Heading>
                         <ContactList>
                             <EmailIcon icon_path={'/gmail.png'}>
-                                <p>taterowney at gmail.com</p>
+                                <p>work at taterowney.com</p>
                             </EmailIcon>
                             <SocialLink href="https://github.com/taterowney" icon_path={'/github.png'} />
                             <SocialLink href="https://www.linkedin.com/in/taterowney/" icon_path={'/linkedin.png'} />
