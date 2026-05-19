@@ -52,7 +52,7 @@ export default function Page() {
                                 marginRight: '25%',
                             }}>
                                 <p>
-                                    I'm a rising third-year undergraduate at Carnegie Mellon University studying Mathematics and Machine Learning. 
+                                    I'm a rising third-year undergraduate at Carnegie Mellon University studying Mathematics and Machine Learning. I am fortunate to be advised by <a href="https://www.andrew.cmu.edu/user/avigad/" target="_blank">Dr. Jeremy Avigad</a> and <a href="https://wellecks.com/" target="_blank">Dr. Sean Welleck</a>. 
                                     My research is primarily focused on the use of ML in <a href="https://leanprover-community.github.io/#what-is-a-proof-assistant" target='_blank'>formal mathematics</a>, 
                                     where I work with CMU's <a href='https://cmu-l3.github.io/' target='_blank'>L3 Lab</a> and <a href='https://icarm.io/' target='_blank'>The Institute for Computer-Aided Reasoning in Mathematics</a> to invent and develop helpful AI tools for research mathematicians. 
                                     However, I enjoy science in all its forms, and have worked on projects ranging from AI safety to embedded systems engineering. A few of my projects are shown below. 
