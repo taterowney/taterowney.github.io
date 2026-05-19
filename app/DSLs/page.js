@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-const target = 'https://github.com/taterowney/ExternalComputationsInLean/';
+const target = 'https://github.com/taterowney/DSLean/';
 
 export default function Redirect() {
   useEffect(() => {

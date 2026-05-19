@@ -42,7 +42,7 @@ export default function Page() {
                     <Spacer height='5rem'/>
                     <FadeContainer>
                         <Subheading>
-                            I'm a student researcher interested in math, data science, and AI.
+                            I'm a student researcher interested in math, data science, and ML.
                         </Subheading>
                         <ExpandingBox
                             text="More about me..."
@@ -52,9 +52,9 @@ export default function Page() {
                                 marginRight: '25%',
                             }}>
                                 <p>
-                                    I'm a second-year undergraduate at Carnegie Mellon University studying Mathematics and Artificial Intelligence. 
+                                    I'm a second-year undergraduate at Carnegie Mellon University studying Mathematics and Machine Learning. 
                                     My research is primarily focused on the use of machine learning in <a href="https://leanprover-community.github.io/#what-is-a-proof-assistant" target='_blank'>formal mathematics</a>, 
-                                    where I work with CMU's <a href='https://cmu-l3.github.io/' target='_blank'>L3 Lab</a> and the <a href='https://www.cmu.edu/hoskinson/about/index.html' target='_blank'>Hoskinson Center</a> to invent and develop helpful AI tools for research mathematicians. 
+                                    where I work with CMU's <a href='https://cmu-l3.github.io/' target='_blank'>L3 Lab</a> and <a href='https://icarm.io/' target='_blank'>The Institute for Computer-Aided Reasoning in Mathematics</a> to invent and develop helpful AI tools for research mathematicians. 
                                     However, I enjoy science in all its forms, and have worked on projects ranging from AI safety to embedded systems engineering. A few of my projects are shown below. 
                                 </p>
                                 <p>
@@ -94,13 +94,20 @@ export default function Page() {
                                 </p>
                                 <a href="https://github.com/riyazahuja/ImProver" target="blank">Check out the ImProver repository</a>
                             </Project>
-                            <Project image_src='/rocket.jpg' alt='Image Credit: Kaylie I think (Im not actually 100% sure who took this photo)'>
+                            <Project image_src = '/DSLean.png' alt='Image Credit: yours truly. I switched my VSCode to light mode for this one so I hope ur happy'>
+                                <h3>Translating Into a Formal Language</h3>
+                                <p>
+                                    Interactive theorem provers such as Lean 4 check the correctness of mathematical proofs, but having it communicate with outside programs (solvers, computer algebra systems, unverified coding languages, you name it) is a challenging engineering problem. I created a tool to automatically translate between Lean and arbitrary external DSLs to allow outside programs to be used for proof automation in Lean.
+                                </p>
+                                <a href="https://arxiv.org/abs/2602.18657" target="blank">Take a look at the preprint</a>
+                            </Project>
+                            {/* <Project image_src='/rocket.jpg' alt='Image Credit: Kaylie I think (Im not actually 100% sure who took this photo)'>
                                 <h3>Shooting for the Stars</h3>
                                 <p>
                                     What started as messing around out of curiosity one afternoon has turned into a year and counting working with the Carnegie Mellon Rocket Command, my school's competitive rocketry team. I've developed and implemented data collection, filtering, and control algorithms on embedded systems to keep our rocket on target as we demonstrate its capabilities to NASA. 
                                 </p>
                                 <a href="https://github.com/carnegie-mellon-rocket-command/Avionics-2025" target="blank">A bit of what we do</a>
-                            </Project>
+                            </Project> */}
                             <Project image_src='/SUDS.png' alt='Image Credit: MacOS screenshot tool (jk I literally made this)'>
                                 <h3>Data Science for Social Good</h3>
                                 <p>
@@ -111,9 +118,9 @@ export default function Page() {
                             <Project image_src="/jailbreak_figure.png" alt='Image Credit: Tate Rowney, Xuning Ying. "Distractor-Based Jailbreaking Attacks in Language Models and Associated Changes in Chain-of-Thought Content". AAAI 2026.'>
                                 <h3>Jailbreaking Prevention for AI Safety</h3>
                                 <p>
-                                    Myself and a co-author identified a new form of jailbreaking attack in large language models, and analyzed its effects on models' reasoning. Our paper has been accepted for publication at AAAI 2026. 
+                                    Myself and a co-author identified a new form of jailbreaking attack in large language models, and analyzed its effects on models' reasoning. We presented out paper at AAAI 2026 in Singapore. 
                                 </p>
-                                <a href="https://taterowney.com/jailbreak" target="blank">The latest on our paper</a>
+                                <a href="https://doi.org/10.1609/aaai.v40i48.42273" target="blank">Read the details</a>
                             </Project>
 
                         </ProjectCarousel>
