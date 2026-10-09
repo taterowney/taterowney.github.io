@@ -758,7 +758,7 @@ export function ExpandingBox({ text, children, style, ...props }) {
   );
 }
 
-export function IntroAnimation({ children }) {
+export function IntroAnimation({ children, onFinished }) {
   const logoBlueText = 'Tate';
   const logoBlackText = 'Rowney';
   const waitTime = 12; // ticks before typing begins
@@ -780,7 +780,7 @@ export function IntroAnimation({ children }) {
 
     if (!slideOut) {
       setSlideOut(true);
-      const id = setTimeout(() => {setHidden(true)}, 300);
+      const id = setTimeout(() => {setHidden(true); onFinished?.()}, 300);
       // return () => clearTimeout(id);
       return () => {}
     }

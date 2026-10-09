@@ -1,18 +1,14 @@
 'use client';
+import { useState } from 'react';
 // import React from 'react';
 import { Bookmark, Heading, TitleHeading, Topbar, Logo, NavItem, Spacer, Subheading, FadeContainer, ProjectCarousel, SocialLink, ExpandingBox, EmailIcon, IntroAnimation, Project, ContactList } from './components.js';
+import { LorenzBackground } from './lorenz.js';
 
 export default function Page() {
-    return <div
-
-                style={{
-                    backgroundImage: 'url(/background_light.png)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundAttachment: 'fixed',
-                }}>
-            <IntroAnimation>
+    const [introFinished, setIntroFinished] = useState(false);
+    return <div>
+            <LorenzBackground active={introFinished} />
+            <IntroAnimation onFinished={() => setIntroFinished(true)}>
                 <Topbar>
                     <Logo />
                     <span> </span>
