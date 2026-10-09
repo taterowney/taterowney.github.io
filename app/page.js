@@ -38,7 +38,7 @@ export default function Page() {
                     <Spacer height='5rem'/>
                     <FadeContainer>
                         <Subheading>
-                            I'm a student researcher interested in math, data science, and ML.
+                            I'm a student researcher interested in formal methods, math, and machine learning.
                         </Subheading>
                         <ExpandingBox
                             text="More about me..."
@@ -48,7 +48,7 @@ export default function Page() {
                                 marginRight: '25%',
                             }}>
                                 <p>
-                                    I'm a rising third-year undergraduate at Carnegie Mellon University studying Mathematics and Machine Learning. I am fortunate to be advised by <a href="https://www.andrew.cmu.edu/user/avigad/" target="_blank">Dr. Jeremy Avigad</a> and <a href="https://wellecks.com/" target="_blank">Dr. Sean Welleck</a>. 
+                                    I'm a third-year undergraduate at Carnegie Mellon University studying Mathematics and Machine Learning. I am fortunate to be advised by <a href="https://www.andrew.cmu.edu/user/avigad/" target="_blank">Dr. Jeremy Avigad</a> and <a href="https://wellecks.com/" target="_blank">Dr. Sean Welleck</a>. 
                                     My research is primarily focused on the use of ML in <a href="https://leanprover-community.github.io/#what-is-a-proof-assistant" target='_blank'>formal mathematics</a>, 
                                     where I work with CMU's <a href='https://cmu-l3.github.io/' target='_blank'>L3 Lab</a> and <a href='https://icarm.io/' target='_blank'>The Institute for Computer-Aided Reasoning in Mathematics</a> to invent and develop helpful AI tools for research mathematicians. 
                                     However, I enjoy science in all its forms, and have worked on projects ranging from AI safety to embedded systems engineering. A few of my projects are shown below. 
@@ -95,7 +95,7 @@ export default function Page() {
                                 <p>
                                     I've found that the most interesting applications of science are those with real-world impact. My team and I worked with the maintainers of Pittsburgh's public riverfront trails to analyze and predict traffic patterns to help maintainence and future expansion. 
                                 </p>
-                                <a href="https://suds-cmu.org/" target="blank">About our organization</a>
+                                <a href="https://cmusuds.org/" target="blank">About our organization</a>
                             </Project>
                             <Project image_src="/jailbreak_figure.png" alt='Image Credit: Tate Rowney, Xuning Ying. "Distractor-Based Jailbreaking Attacks in Language Models and Associated Changes in Chain-of-Thought Content". AAAI 2026.'>
                                 <h3>Jailbreaking Prevention for AI Safety</h3>
