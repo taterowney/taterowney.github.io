@@ -80,34 +80,20 @@ export default function Page() {
                             I love creating things! Here are some projects I've worked on:
                         </Subheading>
                         <ProjectCarousel>
-                            <Project image_src = '/OCR.gif' alt="Image Credit: ME">
-                                <h3>Recognizing Handwritten Math Expressions</h3>
-                                <p>
-                                    Computer interpretation of handwritten math is a challenging problem due to the variablity in size and placement of many characters. I created and explored the viability of a novel computer-vision algorithm to solve this problem.
-                                </p>
-                                <a href="https://doi.org/10.55630/sjc.2023.17.107-116" target="blank">Read the paper</a>
-                            </Project>
                             <Project image_src = '/ImProver.png' alt='Image Credit: Ahuja et al., "ImProver: Agent-Based Proof Optimization", https://arxiv.org/pdf/2410.04753'>
                                 <h3>ImProving Formal Proofs</h3>
                                 <p>
                                     Generative AI is flexible but unreliable, while code-based theorem provers are always correct but hard to use. By combining the strengths of each, my research group and I are creating a system to automatically optimize and clarify formal proofs, along with other tools and infrastructure to assist mathematicians. 
                                 </p>
-                                <a href="https://github.com/riyazahuja/ImProver" target="blank">Check out the ImProver repository</a>
+                                <a href="https://arxiv.org/abs/2605.22885" target="blank">Check out the preprint</a>
                             </Project>
                             <Project image_src = '/DSLean.png' alt='Image Credit: yours truly. I switched my VSCode to light mode for this one so I hope ur happy'>
                                 <h3>Translating Into a Formal Language</h3>
                                 <p>
                                     Interactive theorem provers such as Lean 4 check the correctness of mathematical proofs, but having it communicate with outside programs (solvers, computer algebra systems, unverified coding languages, you name it) is a challenging engineering problem. I created a tool to automatically translate between Lean and arbitrary external DSLs to allow outside programs to be used for proof automation in Lean.
                                 </p>
-                                <a href="https://arxiv.org/abs/2602.18657" target="blank">Take a look at the preprint</a>
+                                <a href="https://doi.org/10.34727/2026/isbn.978-3-85448-093-8_16" target="blank">Take a look at the paper</a>
                             </Project>
-                            {/* <Project image_src='/rocket.jpg' alt='Image Credit: Kaylie I think (Im not actually 100% sure who took this photo)'>
-                                <h3>Shooting for the Stars</h3>
-                                <p>
-                                    What started as messing around out of curiosity one afternoon has turned into a year and counting working with the Carnegie Mellon Rocket Command, my school's competitive rocketry team. I've developed and implemented data collection, filtering, and control algorithms on embedded systems to keep our rocket on target as we demonstrate its capabilities to NASA. 
-                                </p>
-                                <a href="https://github.com/carnegie-mellon-rocket-command/Avionics-2025" target="blank">A bit of what we do</a>
-                            </Project> */}
                             <Project image_src='/SUDS.png' alt='Image Credit: MacOS screenshot tool (jk I literally made this)'>
                                 <h3>Data Science for Social Good</h3>
                                 <p>
@@ -133,7 +119,7 @@ export default function Page() {
                         <Heading>Contact Me</Heading>
                         <ContactList>
                             <EmailIcon icon_path={'/gmail.png'}>
-                                <p>work at taterowney.com</p>
+                                <p><span>work</span> <span>at</span> <span>taterowney.com</span></p>
                             </EmailIcon>
                             <SocialLink href="https://github.com/taterowney" icon_path={'/github.png'} />
                             <SocialLink href="https://www.linkedin.com/in/taterowney/" icon_path={'/linkedin.png'} />

@@ -5,14 +5,18 @@ export default function RootLayout({ children }) {
         <meta charSet="UTF-8" />
         <title>Tate Rowney</title>
         <link rel="stylesheet" href="https://use.typekit.net/kll8mmd.css" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicons/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
-        {/* <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" /> */}
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
         <link rel="manifest" href="/favicons/site.webmanifest" />
-        <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5" />
-        <meta name="msapplication-TileColor" content="#da532c" />
+        <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#C41224" />
+        <meta name="msapplication-TileColor" content="#C41224" />
         <meta name="theme-color" content="#ffffff" />
+        <style>{`
+          a { color: #C41224; }
+          a:visited, a:hover { color: #8d1713; }
+        `}</style>
       </head>
       <body
         style={{

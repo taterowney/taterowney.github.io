@@ -142,7 +142,7 @@ export function Logo() {
   return <p>
     <span style={{
       fontSize: narrow ? (superNarrow ? '1.25rem' : '1.5rem') : '2rem',
-      backgroundColor: '#00007c',
+      backgroundColor: '#C41224',
       fontFamily: 'Courier New',
       borderRadius: '5px',
       color: 'white',
@@ -220,8 +220,8 @@ export function NavItem({ children, target_id, style, ...props }) {
 
   const [hover, setHover] = useState(false);
   const active = useYLevelScroll(target_id, 100);
-  const backgroundColor = hover ? (active ? 'rgba(0,0,0,0.1)' : '#00007c') : 'transparent';
-  const color = active ? ('#00007c') : (hover ? 'white' : 'black');
+  const backgroundColor = hover ? (active ? 'rgba(0,0,0,0.1)' : '#C41224') : 'transparent';
+  const color = active ? ('#C41224') : (hover ? 'white' : 'black');
   const fontWeight = active ? '500' : '200';
 
   return (
@@ -479,7 +479,7 @@ export function ProjectCarousel({ children }) {
           transform: 'translate(-20%, -50%)',
           zIndex: 1,
           fontSize: '1.25rem',
-          backgroundColor: prevHover ? 'rgb(60,67,119)' : 'rgb(148,148,148)',
+          backgroundColor: prevHover ? '#8d1713' : 'rgb(148,148,148)',
           color: 'white',
           border: 'none',
           borderRadius: '50%',
@@ -559,7 +559,7 @@ export function ProjectCarousel({ children }) {
           transform: 'translate(110%, -50%)',
           zIndex: 1,
           fontSize: '1.25rem',
-          backgroundColor: nextHover ? 'rgb(60,67,119)' : 'rgb(148,148,148)',
+          backgroundColor: nextHover ? '#8d1713' : 'rgb(148,148,148)',
           color: 'white',
           border: 'none',
           borderRadius: '50%',
@@ -727,7 +727,7 @@ export function ExpandingBox({ text, children, style, ...props }) {
           margin: 0,
           textAlign: 'center',
           fontWeight: 400,
-          color : expanded ? 'rgba(0, 0, 128, 0.5)' : '#000',
+          color : expanded ? 'rgba(141, 23, 19, 0.6)' : '#000',
           borderRadius: '0.5em',
           transition: 'color 0.3s',
           userSelect: 'none',
@@ -829,7 +829,7 @@ export function IntroAnimation({ children }) {
               style={{
                 fontFamily: 'Courier New',
                 fontSize: '10vw',
-                backgroundColor: '#00007c',
+                backgroundColor: '#C41224',
                 color: 'white',
                 borderRadius: '5px',
                 padding: '0 0.1em',
